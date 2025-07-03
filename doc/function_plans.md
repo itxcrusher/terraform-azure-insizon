@@ -1,0 +1,11 @@
+The Consumption plan is generally the cheapest way to host Azure Functions. It's a pay-as-you-go model, where you only pay for the compute resources when your functions are running. You're billed based on function executions, execution time, and memory usage. [1, 1, 2, 2, 3, 3, 4, 4, 5]  
+Here's a more detailed explanation: 
+
+• Consumption Plan: This plan automatically scales up or down based on the number of incoming events. It's the default hosting plan and provides true serverless hosting. [2, 2]  
+• Premium Plan: This plan offers dedicated compute resources and allows you to run multiple function apps on the same Premium plan. While it provides more features and control, it's typically more expensive than the Consumption plan. [6, 6, 7, 8, 9, 10]  
+• Dedicated Plan: This plan uses an App Service Plan and is suited for apps requiring dedicated resources and more control. It's generally more expensive than the Consumption or Premium plans. [7, 7, 11, 11, 12, 13]  
+
+In essence, the Consumption plan is the most cost-effective option for Azure Functions, especially if your functions are not frequently running or if you need to scale up and down based on demand. [2, 4]  
+
+
+[1] https://azure.microsoft.com/en-us/pricing/details/functions/[2] https://learn.microsoft.com/en-us/azure/azure-functions/functions-scale[3] https://learn.microsoft.com/en-us/azure/azure-functions/functions-consumption-costs[4] https://stackoverflow.com/questions/51996713/cheapest-way-to-host-azure-functions[5] https://www.reddit.com/r/AZURE/comments/1fzz0v1/azure_functions_serverlesscomputing_cost/[6] https://learn.microsoft.com/en-us/azure/azure-functions/functions-premium-plan[7] https://learn.microsoft.com/en-us/azure/app-service/overview-hosting-plans[8] https://azuretechinsider.com/azure-function-consumption-to-flex-plan-migration/[9] https://modal.com/blog/azure-function-pricing-guide[10] https://www.scaler.com/topics/azure/azure-functions/[11] https://sahangunathilaka.medium.com/how-to-select-the-most-suitable-hosting-plan-for-azure-function-app-deployment-8896f0a63a6a[12] https://modal.com/blog/azure-function-pricing-guide[13] https://www.datadoghq.com/blog/optimize-and-secure-azure-functions/

@@ -1,3 +1,11 @@
+#
+.env
+.env.sh
+env.sh
+shell/backend_init.sh
+private/*
+.DS_Store
+
 # Local .terraform directories
 .terraform/
 
