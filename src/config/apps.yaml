@@ -1,0 +1,39 @@
+apps:
+  - Name: insizon-app
+    Env: dev
+
+    # Required
+    KeyVaultName: insizon-dev-keyvault
+    ObjectId: "9eafb650-dc42-4c10-8b4f-26c16609d890"  # Azure AD Service Principal or User Object ID
+    TenantId: "72f988bf-86f1-41af-91ab-2d7cd011db47"  # Azure AD Tenant ID
+
+    # Optional Customizations
+    Location: centralus             # Default: centralus
+    OsType: Windows                 # Options: Windows, Linux
+    Sku: D1                         # Free_F1, B1, S1, P1v3, etc.
+    DotnetVersion: v8.0            # Used only if OsType is Windows
+    NodeVersion: ""                # Used only if OsType is Linux and runtime is node
+    AlwaysOn: true
+
+    # Enable/disable optional resources
+    CreateAppInsight: true
+    CreateLogicApp: false
+
+    Github:
+      repoUrl: "https://github.com/insizon/insizon-dotnet"
+      token: "${GITHUB_PAT}"       # Securely passed via tfvars or env var
+      branch: dev                  # Optional override (default: uses Env)
+
+    CustomDomain:
+      URL: "www.insizon.com"
+
+    StorageAccount:
+      - insizonfilestatic1
+      - insizonmediaassets2
+
+    Database:
+      Type: SQL                    # Options: SQL or PostgreSQL
+      ServerAdminLogin: adminuser
+      Password: "${DB_PASSWORD}"  # Securely injected via tfvars, not hardcoded
+      Sku: GP_Gen5_2
+      SizeGB: 5

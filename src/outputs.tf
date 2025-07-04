@@ -1,28 +1,27 @@
-# Output.tf
-# Inorder to output from module you first
-# 1. Create output block in module
-# 2. Add that module to root.terraform 
-# 3. Create output block in output.tf file and reference that module
-# https://stackoverflow.com/questions/47034515/output-a-field-from-a-module
+output "webapps" {
+  value = {
+    for k, m in module.webapps : k => m.app_url
+  }
+  description = "Deployed web app URLs"
+}
 
+output "function_apps" {
+  value = {
+    for k, m in module.function_apps : k => m.function_url
+  }
+  description = "Function App endpoints"
+}
 
+output "created_users" {
+  value = {
+    for k, m in module.entra_id_users : k => m.user_principal_name
+  }
+  description = "User principal names created in Entra ID"
+}
 
-
-
-# output "main-users-output" {
-#   value = module.my_iam_module.users-output
-# }
-
-# output "main-users-password-output" {
-#   sensitive = true
-#   value = module.my_iam_module.users-password-outputs
-# }
-
-
-# output "main-app-secrets" {
-#   value = module.secretManager_module.cat_seceret
-# }
-
-# output "name" {
-#   value = "mouse"
-# }
+output "static_files_summary" {
+  value = {
+    for k, m in module.static_files : k => m.upload_summary
+  }
+  description = "Summary of uploaded static files"
+}

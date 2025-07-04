@@ -16,9 +16,10 @@ terraform {
 # Azure App Registrion tab (terraform-app-registration) - tenant_id, client_id, client_secret
 # Azure App Registrion the process of registering an application with Microsoft Entra ID (formerly Azure Active Directory). This registration gives your application the necessary credentials to securely access Azure services and APIs.
 provider "azurerm" {
-  subscription_id = ""
-  tenant_id       = ""
-  client_id       = ""
-  client_secret   = ""
   features {}
+
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 }

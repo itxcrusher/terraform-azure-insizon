@@ -1,0 +1,20 @@
+# Service Bus definitions per environment
+buses:
+  - Name: insizon-bus
+    Env: dev
+    Topics:
+      - name: new-user-topic
+        MaxTopicSize: 1024   # in MB
+        MessageTTL: "14.00:00:00"   # format: DD.HH:MM:SS
+      - name: order-topic
+        MaxTopicSize: 512
+        MessageTTL: "7.00:00:00"
+
+    Queues:
+      - name: notification-queue
+        MaxDeliveryCount: 5
+        MessageTTL: "2.00:00:00"
+
+      - name: cleanup-queue
+        MaxDeliveryCount: 10
+        MessageTTL: "4.00:00:00"

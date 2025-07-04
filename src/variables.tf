@@ -1,32 +1,33 @@
-# variables.tf where you place all variables
-# https://mrfreelancer9.medium.com/integrate-aws-s3-with-your-node-js-project-a-step-by-step-guide-f7f160ea8d29
-# https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html
-
-
-
-variable "app-names-list" {
-  type = list(string)
-  default = [
-    "insizon-dev-keygroup1",
-  ]
+# Core variables passed via tfvars per environment
+variable "app_environment" {
+  type        = string
+  description = "The environment to deploy to (dev, qa, prod)"
 }
 
-variable "app-environment" {
-  type = string
+variable "tenant_id" {
+  type        = string
+  description = "Azure AD tenant ID"
 }
 
-variable "app_object" {
-  type = object({
-    ObjectId = string
-    TenantId = string
-  })
-  default = {
-    ObjectId = ""
-    TenantId = ""
-  }
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription ID"
 }
 
-variable "app-users" {
-  type    = list(string)
-  default = ["lscott-user", "tsmith-user", "insizon-app"]
+variable "client_id" {
+  type        = string
+  description = "Azure client ID for Terraform service principal"
+}
+
+variable "client_secret" {
+  type        = string
+  description = "Azure client secret for Terraform service principal"
+}
+
+# Optional GitHub token (can also be passed via secrets manager or env vars)
+variable "github_token" {
+  type        = string
+  description = "GitHub personal access token for private repo access"
+  sensitive   = true
+  default     = ""
 }

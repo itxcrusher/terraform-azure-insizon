@@ -1,0 +1,17 @@
+
+# List of Microsoft Entra ID (Azure AD) users/service principals
+users:
+  - username: lscott-user
+    fullName: "Lamonte Scott"
+    roles: [admin, developer]
+    limit: ["insizon-app"]
+
+  - username: tsmith-user
+    fullName: "Tom Smith"
+    roles: [readonly, auditor]
+    limit: ["insizon-app"]
+
+  - username: service-bot
+    fullName: "Insizon Bot"
+    roles: [serviceAccount]
+    limit: ["insizon-app"]

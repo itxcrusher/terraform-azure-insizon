@@ -1,0 +1,8 @@
+# Static file upload instructions to Azure Blob Storage
+files:
+  - FolderName: public
+    StorageAccountName: insizon-static-bucket
+    ContainerName: public-assets
+
+    FilesExcluded:
+      - secret.txt

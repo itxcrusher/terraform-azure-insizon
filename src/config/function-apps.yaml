@@ -1,0 +1,15 @@
+# List of Azure Function Apps to deploy
+function_apps:
+  - Name: insizon-trigger
+    Env: dev
+    Hosting:
+      Type: Linux         # or "Windows"
+      Plan: Consumption   # Options: Consumption, FlexConsumption, AppService
+    Runtime:
+      Language: node
+      Version: "18"
+    CreateAppInsight: true
+    CreateLogicApp: false
+    Github:
+      repoUrl: "https://github.com/insizon/insizon-functions"
+      token: "${GITHUB_PAT}"
