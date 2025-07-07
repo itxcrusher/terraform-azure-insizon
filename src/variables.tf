@@ -1,17 +1,10 @@
 # Core variables passed via tfvars per environment
-variable "app_environment" {
-  type        = string
-  description = "The environment to deploy to (dev, qa, prod)"
-}
 
-variable "tenant_id" {
+variable "github_token" {
   type        = string
-  description = "Azure AD tenant ID"
-}
-
-variable "subscription_id" {
-  type        = string
-  description = "Azure subscription ID"
+  description = "GitHub personal access token for private repo access"
+  sensitive   = true
+  default     = ""
 }
 
 variable "client_id" {
@@ -24,10 +17,23 @@ variable "client_secret" {
   description = "Azure client secret for Terraform service principal"
 }
 
-# Optional GitHub token (can also be passed via secrets manager or env vars)
-variable "github_token" {
+variable "tenant_id" {
   type        = string
-  description = "GitHub personal access token for private repo access"
-  sensitive   = true
-  default     = ""
+  description = "Azure AD tenant ID"
+}
+
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription ID"
+}
+
+variable "roles_lookup" {
+  type = map(string)
+  default = {
+    admin          = "Owner"
+    developer      = "Contributor"
+    readonly       = "Reader"
+    auditor        = "Security Reader"
+    serviceAccount = "Contributor"
+  }
 }

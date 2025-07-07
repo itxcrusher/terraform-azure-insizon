@@ -4,28 +4,28 @@ apps:
 
     # Required
     KeyVaultName: insizon-dev-keyvault
-    ObjectId: "9eafb650-dc42-4c10-8b4f-26c16609d890"  # Azure AD Service Principal or User Object ID
-    TenantId: "72f988bf-86f1-41af-91ab-2d7cd011db47"  # Azure AD Tenant ID
 
     # Optional Customizations
-    Location: centralus             # Default: centralus
-    OsType: Windows                 # Options: Windows, Linux
-    Sku: D1                         # Free_F1, B1, S1, P1v3, etc.
+    Location: centralus            # Default: centralus
+    OsType: Windows                # Options: Windows, Linux
+    Sku: D1                        # Free_F1, B1, S1, P1v3, etc.
     DotnetVersion: v8.0            # Used only if OsType is Windows
     NodeVersion: ""                # Used only if OsType is Linux and runtime is node
-    AlwaysOn: true
+    AlwaysOn: false                # Azure blocks always_on = true on F1 / D1 plans.
 
     # Enable/disable optional resources
     CreateAppInsight: true
     CreateLogicApp: false
 
     Github:
-      repoUrl: "https://github.com/insizon/insizon-dotnet"
-      token: "${GITHUB_PAT}"       # Securely passed via tfvars or env var
-      branch: dev                  # Optional override (default: uses Env)
+      # repoUrl: "https://github.com/insizon/insizon-dotnet"
+      # branch: dev
+      repoUrl: "https://github.com/itxcrusher/insizon-sample-repo"
+      branch: webapp
 
     CustomDomain:
-      URL: "www.insizon.com"
+      # URL: "www.insizon.com"
+      URL: "insizon.muhammadhassaanjaved.com"
 
     StorageAccount:
       - insizonfilestatic1
@@ -35,5 +35,6 @@ apps:
       Type: SQL                    # Options: SQL or PostgreSQL
       ServerAdminLogin: adminuser
       Password: "${DB_PASSWORD}"  # Securely injected via tfvars, not hardcoded
-      Sku: GP_Gen5_2
+      Sku: GP_S_Gen5_2
       SizeGB: 5
+      MinCapacity: 0.5

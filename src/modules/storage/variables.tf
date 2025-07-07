@@ -11,7 +11,7 @@ variable "file_object" {
     FilesExcluded      = optional(list(string), [])
 
     # Optional flags
-    create_cdn         = optional(bool, false)
-    location           = optional(string, "centralus")
+    create_cdn = optional(bool, false)
+    location   = optional(string, "centralus")
   })
 }

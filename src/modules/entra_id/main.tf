@@ -12,12 +12,13 @@ resource "random_password" "pwd" {
 }
 
 resource "azuread_user" "this" {
-  for_each            = var.users_object
+  for_each = var.users_object
 
-  user_principal_name = "${each.value.username}@${data.azuread_domains.primary.domains[0].domain_name}"
+  # each.key  = username (map key)
+  user_principal_name = "${each.key}@${data.azuread_domains.primary.domains[0].domain_name}"
   display_name        = each.value.fullName
-  mail_nickname       = each.value.username
+  mail_nickname       = each.key
 
-  password             = random_password.pwd[each.key].result
+  password              = random_password.pwd[each.key].result
   force_password_change = true
 }

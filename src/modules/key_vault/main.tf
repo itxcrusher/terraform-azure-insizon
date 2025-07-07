@@ -2,10 +2,12 @@
 #  KEY VAULT RESOURCE
 # ─────────────────────────────────────────────────────────────
 resource "azurerm_key_vault" "this" {
-  name                        = local.kv_name
-  location                    = var.keyvault_object.Rg_Location
-  resource_group_name         = var.keyvault_object.Rg_Name
-  tenant_id                   = var.keyvault_object.TenantId
+  name                = local.kv_name
+  location            = var.keyvault_object.Rg_Location
+  resource_group_name = var.keyvault_object.Rg_Name
+  tenant_id           = var.keyvault_object.TenantId
+
+  # allowed_tenant_ids = ["72f988bf-86f1-41af-91ab-2d7cd011db47", "b4ab6995-655a-4ae2-8de1-a1ae7849462f"]
 
   enable_rbac_authorization   = true
   sku_name                    = "standard"
@@ -35,9 +37,20 @@ resource "azurerm_role_assignment" "kv_rbac" {
 #  SECRET  UPLOADS
 # ─────────────────────────────────────────────────────────────
 resource "azurerm_key_vault_secret" "secrets" {
-  for_each     = local.secrets_map
+  for_each = local.secrets_map
 
   name         = each.key
   value        = each.value
   key_vault_id = azurerm_key_vault.this.id
+
+  # Optional – mark blobs vs creds
+  content_type = length(each.value) > 50 ? "application/octet-stream" : "text/plain"
+
+  lifecycle {
+    # Guard against >25 KB (Azure limit)
+    precondition {
+      condition     = length(each.value) < 25000
+      error_message = "Secret ${each.key} exceeds 25 KB Azure limit."
+    }
+  }
 }

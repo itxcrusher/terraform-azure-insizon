@@ -9,8 +9,8 @@ output "container_name" {
 }
 
 output "cdn_hostname" {
-  value       = length(azurerm_cdn_endpoint.endpoint) == 1 ? azurerm_cdn_endpoint.endpoint[0].host_name : null
-  description = "CDN endpoint (if create_cdn = true)"
+  description = "CDN endpoint FQDN (null when create_cdn = false)"
+  value       = try("${azurerm_cdn_endpoint.endpoint[0].name}.azureedge.net", null)
 }
 
 output "upload_summary" {

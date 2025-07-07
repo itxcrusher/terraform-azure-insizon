@@ -1,17 +1,19 @@
 
 # List of Microsoft Entra ID (Azure AD) users/service principals
+# make sure the limit field matches Name-Env format used in local.apps_by_name
+
 users:
   - username: lscott-user
     fullName: "Lamonte Scott"
     roles: [admin, developer]
-    limit: ["insizon-app"]
+    limit: ["insizon-app-dev"]
 
   - username: tsmith-user
     fullName: "Tom Smith"
     roles: [readonly, auditor]
-    limit: ["insizon-app"]
+    limit: ["insizon-app-dev"]
 
   - username: service-bot
     fullName: "Insizon Bot"
     roles: [serviceAccount]
-    limit: ["insizon-app"]
+    limit: ["insizon-app-dev"]

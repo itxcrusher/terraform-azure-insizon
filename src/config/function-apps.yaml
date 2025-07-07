@@ -11,5 +11,5 @@ function_apps:
     CreateAppInsight: true
     CreateLogicApp: false
     Github:
-      repoUrl: "https://github.com/insizon/insizon-functions"
-      token: "${GITHUB_PAT}"
+      repoUrl: "https://github.com/itxcrusher/insizon-sample-repo"
+      branch: function

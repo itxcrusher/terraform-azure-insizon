@@ -1,25 +1,29 @@
+################################################################################
+# outputs.tf ── handy details for callers / CI
+################################################################################
+
 output "namespace_name" {
+  description = "Service-Bus namespace name"
   value       = azurerm_servicebus_namespace.ns.name
-  description = "Service-Bus namespace"
 }
 
 output "primary_connection_string" {
-  value       = azurerm_servicebus_namespace_authorization_rule.rootmanage.primary_connection_string
-  description = "RootManageSharedAccessKey connection string"
+  description = "RootManageSharedAccessKey connection string (keep secret!)"
+  value       = data.azurerm_servicebus_namespace_authorization_rule.rootmanage.primary_connection_string
   sensitive   = true
 }
 
 output "topic_names" {
+  description = "All topic names in the namespace"
   value       = [for t in azurerm_servicebus_topic.topic : t.name]
-  description = "Created topic names"
 }
 
 output "queue_names" {
+  description = "All queue names in the namespace"
   value       = [for q in azurerm_servicebus_queue.queue : q.name]
-  description = "Created queue names"
 }
 
 output "resource_group" {
+  description = "Name of the RG that holds the namespace"
   value       = azurerm_resource_group.sb_rg.name
-  description = "Resource group containing the namespace"
 }

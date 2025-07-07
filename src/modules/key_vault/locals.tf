@@ -2,11 +2,13 @@
 #  LOCALS – YAML → Terraform-friendly structures
 # ─────────────────────────────────────────────────────────────
 locals {
-  # Clean base name (lowercase, digits) then append random suffix
-  kv_root_clean = lower(replace(
-    "${var.keyvault_object.AppName}${var.keyvault_object.AppEnvironment}",
-    "/[^a-z0-9]/", ""
-  ))
+  kv_root_clean = lower(
+    replace(
+      "${var.keyvault_object.AppName}${var.keyvault_object.AppEnvironment}",
+      "[^a-z0-9]",
+      ""
+    )
+  )
 
   kv_name = "${substr(local.kv_root_clean, 0, 20)}${random_string.suffix.result}"
 

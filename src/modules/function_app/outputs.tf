@@ -1,5 +1,5 @@
 output "function_url" {
-  value = local.os_type_lower == "windows" ? azurerm_windows_function_app.fa_win[0].default_hostname : azurerm_linux_function_app.fa_linux[0].default_hostname
+  value = local.os_type_lower == "windows" ? local.windows_fa_url : local.linux_fa_url
 }
 
 output "ai_name" {

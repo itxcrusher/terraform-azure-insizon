@@ -11,8 +11,8 @@ resource "azurerm_application_insights" "ai" {
 # ---------- Base app settings ----------
 locals {
   app_settings_base = {
-    FUNCTIONS_WORKER_RUNTIME       = local.runtime_lang
-    WEBSITE_RUN_FROM_PACKAGE       = "1"
+    FUNCTIONS_WORKER_RUNTIME = local.runtime_lang
+    WEBSITE_RUN_FROM_PACKAGE = "1"
   }
 
   app_settings = merge(
@@ -39,8 +39,8 @@ resource "azurerm_windows_function_app" "fa_win" {
   site_config {
     ftps_state = "Disabled"
     application_stack {
-      node_version   = local.runtime_lang == "node"   ? "~${local.runtime_ver}" : null
-      dotnet_version = local.runtime_lang == "dotnet" ? "v${local.runtime_ver}" : null
+      node_version            = local.runtime_lang == "node" ? "~${local.runtime_ver}" : null
+      dotnet_version          = local.runtime_lang == "dotnet" ? "v${local.runtime_ver}" : null
       powershell_core_version = local.runtime_lang == "powershell" ? local.runtime_ver : null
     }
   }
@@ -68,7 +68,7 @@ resource "azurerm_linux_function_app" "fa_linux" {
   site_config {
     ftps_state = "Disabled"
     application_stack {
-      node_version   = local.runtime_lang == "node"   ? "~${local.runtime_ver}" : null
+      node_version   = local.runtime_lang == "node" ? tostring(local.runtime_ver) : null
       dotnet_version = local.runtime_lang == "dotnet" ? "v${local.runtime_ver}" : null
     }
   }

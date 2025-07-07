@@ -5,13 +5,13 @@ variable "function_object" {
     Env  = string
 
     Hosting = object({
-      Type = string               # Linux | Windows
-      Plan = string               # Consumption | FlexConsumption | AppService
+      Type = string # Linux | Windows
+      Plan = string # Consumption | FlexConsumption | AppService
     })
 
     Runtime = object({
-      Language = string           # node | python | dotnet | java | powershell
-      Version  = string           # e.g. 18, 3.11, 8.0
+      Language = string # node | python | dotnet | java | powershell
+      Version  = string # e.g. 18, 3.11, 8.0
     })
 
     CreateAppInsight = optional(bool, false)
@@ -19,7 +19,7 @@ variable "function_object" {
 
     Github = optional(object({
       repoUrl = string
-      token   = string
+      token   = optional(string)
       branch  = optional(string)
     }), null)
 

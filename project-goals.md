@@ -111,3 +111,28 @@ FilesExcluded
   - file2.txt
   - photo.img
 that will create folder subfolder base on yaml property FolderName and will add all files. Unless the FileExcluded property is found and will avoid adding those files to subfolder bucket
+
+
+## Project Additional
+
+
+## For section Upate App Module
+1. Add app registration - Need for app to work propertly / communication with Azure API?
+2. Azure Cache for Redis
+In yaml file should be able to create_service: boolean
+to add Azure Cache for Redis
+Yaml should include additional property to config redis to project specification
+
+
+## Add Temporary Access module 
+1. Must read from seperate yaml file then user.yaml
+2. Will give users / contractor temporary access to perform their changes (Basically, anything you would have needed access too, to perform project)
+yaml should have properties such
+daysUntilExpire
+...other
+4. Should write these properties to file
+-- client_id (App registration ID)
+-- client_secret (Client secret from App registration)
+-- tenant_id (Azure AD Tenant ID)
+-- subscription_id (Azure Subscription ID)
+-- any other properties needed by contractor (May access to login into Azure portal?)

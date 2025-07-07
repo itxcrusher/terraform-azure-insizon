@@ -10,16 +10,16 @@ additional_principals (optional) lets you inject any number of
 “limit user to specific RG” requirement.
 EOT
   type = object({
-    AppName               = string
-    AppEnvironment        = string
-    Rg_Location           = string
-    Rg_Name               = string
-    TenantId              = string
-    ObjectId              = string        # primary SP / user running TF
+    AppName        = string
+    AppEnvironment = string
+    Rg_Location    = string
+    Rg_Name        = string
+    TenantId       = string
+    ObjectId       = string # primary SP / user running TF
     additional_principals = optional(list(object({
       principal_id   = string
-      role           = string             # e.g. Key Vault Secrets Officer
-      principal_type = string             # User | ServicePrincipal | Group
+      role           = string # e.g. Key Vault Secrets Officer
+      principal_type = string # User | ServicePrincipal | Group
     })), [])
   })
 }

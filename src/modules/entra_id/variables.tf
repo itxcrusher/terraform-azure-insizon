@@ -15,13 +15,6 @@ variable "subscription_id" {
   description = "Current subscription ID (for subscription-level role assignments)."
 }
 
-# app -> resource-group ID lookup, used when users have a `limit:` list
-variable "app_rg_map" {
-  type        = map(string)
-  description = "Map(appName => resource group ID)."
-  default     = {}
-}
-
 # YAML role labels -> Azure built-in role names
 variable "roles_lookup" {
   type = map(string)

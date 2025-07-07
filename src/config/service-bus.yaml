@@ -2,19 +2,20 @@
 buses:
   - Name: insizon-bus
     Env: dev
+    Sku: Standard  # Options: Basic, Standard, Premium
     Topics:
       - name: new-user-topic
         MaxTopicSize: 1024   # in MB
-        MessageTTL: "14.00:00:00"   # format: DD.HH:MM:SS
+        MessageTTL: "P14D"     # 14 days
       - name: order-topic
-        MaxTopicSize: 512
-        MessageTTL: "7.00:00:00"
+        MaxTopicSize: 1024     # [1024 2048 3072 4096 5120 10240 20480 40960 81920]
+        MessageTTL: "P7D"      # 7 days
 
     Queues:
       - name: notification-queue
         MaxDeliveryCount: 5
-        MessageTTL: "2.00:00:00"
+        MessageTTL: "PT2H"     # 2 hours
 
       - name: cleanup-queue
         MaxDeliveryCount: 10
-        MessageTTL: "4.00:00:00"
+        MessageTTL: "PT4H"     # 4 hours
