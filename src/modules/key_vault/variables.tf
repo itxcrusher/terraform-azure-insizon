@@ -44,3 +44,9 @@ variable "enable_purge_protection" {
   default     = false
   description = "Set true to enforce purge protection on the vault."
 }
+
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "Resource ID of the Log Analytics Workspace for diagnostic settings."
+  default     = ""
+}

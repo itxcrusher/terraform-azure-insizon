@@ -16,14 +16,6 @@ variable "function_object" {
 
     CreateAppInsight = optional(bool, false)
     CreateLogicApp   = optional(bool, false)
-
-    Github = optional(object({
-      repoUrl = string
-      token   = optional(string)
-      branch  = optional(string)
-    }), null)
-
-    github_token = optional(string)
   })
 
   ### --- ENUM VALIDATIONS ---

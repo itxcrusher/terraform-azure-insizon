@@ -2,20 +2,16 @@
 buses:
   - Name: insizon-bus
     Env: dev
+    Location: centralus
     Sku: Standard  # Options: Basic, Standard, Premium
     Topics:
       - name: new-user-topic
-        MaxTopicSize: 1024   # in MB
-        MessageTTL: "P14D"     # 14 days
-      - name: order-topic
         MaxTopicSize: 1024     # [1024 2048 3072 4096 5120 10240 20480 40960 81920]
-        MessageTTL: "P7D"      # 7 days
+        MessageTTL: "P14D"     # 14 days
+        TargetApp: insizon-app-dev
 
     Queues:
       - name: notification-queue
         MaxDeliveryCount: 5
         MessageTTL: "PT2H"     # 2 hours
-
-      - name: cleanup-queue
-        MaxDeliveryCount: 10
-        MessageTTL: "PT4H"     # 4 hours
+        TargetApp: insizon-app-dev

@@ -32,27 +32,13 @@ resource "azurerm_storage_account" "sa" {
   tags                     = local.tags
 }
 
-# ---------- GitHub Source Control (optional) ----------
-# Only create if a repo URL AND a usable PAT exist
-# ───────── GitHub → Function App (Actions) ─────────
-resource "azurerm_app_service_source_control" "github_fa" {
-  count = local.enable_github_sc ? 1 : 0
-
-  app_id   = local.windows_fa_id != null ? local.windows_fa_id : local.linux_fa_id
-  repo_url = local.repo_url_safe
-  branch   = local.branch_safe
-
-  use_manual_integration = true
-}
-
 # ---------- Logic App (optional) ----------
-resource "azurerm_logic_app_workflow" "fa_logic" {
-  count               = local.enable_logic ? 1 : 0
-  name                = substr("${local.app_name}-logic", 0, 60)
+module "logic_app" {
+  source              = "../logic_app"
+  create_logic_app    = local.enable_logic
+  name_prefix         = local.app_name
   location            = azurerm_resource_group.fa_rg.location
   resource_group_name = azurerm_resource_group.fa_rg.name
-
-  # definition attribute is not supported in this provider version. Logic App will be created without a workflow definition.
-
-  tags = local.tags
+  definition          = jsondecode(file("${path.module}/../../config/logic-definition.json")).definition
+  tags                = local.tags
 }

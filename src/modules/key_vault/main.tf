@@ -19,6 +19,21 @@ resource "azurerm_key_vault" "this" {
 }
 
 # ─────────────────────────────────────────────────────────────
+#  KEY VAULT DIAGNOSTICS
+# ─────────────────────────────────────────────────────────────
+resource "azurerm_monitor_diagnostic_setting" "keyvault_logs" {
+  count = var.log_analytics_workspace_id != "" ? 1 : 0
+
+  name                        = "diag-${local.kv_name}"
+  target_resource_id          = azurerm_key_vault.this.id
+  log_analytics_workspace_id  = var.log_analytics_workspace_id
+
+  enabled_log {
+    category = "AuditEvent"
+  }
+}
+
+# ─────────────────────────────────────────────────────────────
 #  DYNAMIC RBAC ASSIGNMENTS
 # ─────────────────────────────────────────────────────────────
 resource "azurerm_role_assignment" "kv_rbac" {

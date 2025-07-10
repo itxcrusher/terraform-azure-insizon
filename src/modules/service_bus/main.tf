@@ -2,51 +2,54 @@
 # main.tf ── resources
 ################################################################################
 
-# ── Resource Group ────────────────────────────────────────────────────────────
+# Shared RG per environment
 resource "azurerm_resource_group" "sb_rg" {
   name     = local.rg_name
   location = var.location
   tags     = local.tags
 }
 
-# ── Namespace ────────────────────────────────────────────────────────────────
+# Namespaces per bus
 resource "azurerm_servicebus_namespace" "ns" {
-  name                = local.ns_name
-  location            = azurerm_resource_group.sb_rg.location
+  for_each            = local.bus_map
+  name                = "${each.value.Name}-${each.value.Env}-ns"
+  location            = var.location
   resource_group_name = azurerm_resource_group.sb_rg.name
 
-  sku      = local.sku
-  capacity = local.sku == "Premium" ? 1 : null # capacity only valid on Premium
+  sku      = each.value.Sku
+  capacity = each.value.Sku == "Premium" ? 1 : null
 
-  tags = local.tags
+  tags = {
+    Environment = each.value.Env
+    Application = each.value.Name
+    Module      = "service_bus"
+    ManagedBy   = "Terraform"
+  }
 }
 
-# Azure auto-creates “RootManageSharedAccessKey”.  We *read* it instead of
-# trying to recreate (avoids import errors).
+# Connection string read
 data "azurerm_servicebus_namespace_authorization_rule" "rootmanage" {
+  for_each     = azurerm_servicebus_namespace.ns
   name         = "RootManageSharedAccessKey"
-  namespace_id = azurerm_servicebus_namespace.ns.id
+  namespace_id = each.value.id
 }
 
-# ── Queues ────────────────────────────────────────────────────────────────────
+# Queues
 resource "azurerm_servicebus_queue" "queue" {
   for_each = local.queues_map
 
-  name               = each.value.name
-  namespace_id       = azurerm_servicebus_namespace.ns.id
-  max_delivery_count = each.value.MaxDeliveryCount
-
-  # default_message_time_to_live not yet exposed in provider v3.x
-  # tags not yet supported in provider v3.x
+  name               = each.value.queue.name
+  namespace_id       = azurerm_servicebus_namespace.ns[each.value.ns_name].id
+  max_delivery_count = each.value.queue.MaxDeliveryCount
+  default_message_ttl = each.value.queue.MessageTTL
 }
 
-# ── Topics ────────────────────────────────────────────────────────────────────
+# Topics
 resource "azurerm_servicebus_topic" "topic" {
   for_each = local.topics_map
 
-  name                  = each.value.name
-  namespace_id          = azurerm_servicebus_namespace.ns.id
-  max_size_in_megabytes = each.value.MaxTopicSize
-
-  # default_message_time_to_live & tags not yet supported in provider v3.x
+  name                   = each.value.topic.name
+  namespace_id           = azurerm_servicebus_namespace.ns[each.value.ns_name].id
+  max_size_in_megabytes  = each.value.topic.MaxTopicSize
+  default_message_ttl    = each.value.topic.MessageTTL
 }

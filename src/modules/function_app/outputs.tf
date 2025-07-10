@@ -16,3 +16,8 @@ output "storage_account" {
   value       = azurerm_storage_account.sa.name
   description = "Backing storage account name"
 }
+
+output "logic_app_id" {
+  value       = local.enable_logic ? module.logic_app.logic_app_id : null
+  description = "Logic App ID (if created)"
+}

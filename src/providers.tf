@@ -35,5 +35,3 @@ provider "azurerm" {
 provider "azuread" {
   tenant_id = var.tenant_id
 }
-
-# az login --service-principal -u <client_id> -p <client_secret> --tenant <tenant_id>

@@ -22,7 +22,8 @@ userName: service-bot
 ## Update Web App module
 Note - App Insights, CreateLogicApp should be optional. If false this resource should be deleted
 0. Read from yaml file
-1. Figure out how to get the azurerm_app_service_source_control for private repo using classic access token
+1. Old: Figure out how to get the azurerm_app_service_source_control for private repo using classic access token.
+New: Terraform no longer manages GitHub App Service integration directly. Since the goal is to “auto-deploy App Services from private GitHub repo”, GitHub Actions is the recommended approach. (So we had this change of plan)
 2. Create module for PostgresSQL and Azure SQL where one module of the modules will 
 be ran if a specific property from yaml is found. Database should be one database added to resource group. Also, should Use both SQL and Microsoft Entra authentication
 3. Each resource group should have keyvault. User should be able to view Key, Secret, Certificate

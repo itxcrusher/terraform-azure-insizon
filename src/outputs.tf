@@ -101,6 +101,17 @@ output "static_file_uploads" {
   value       = { for k, m in module.static_files : k => m.upload_summary }
 }
 
+output "static_website_endpoints" {
+  description = "Static website URL and CDN endpoint for each static-files job"
+  value = {
+    for job_key, job_mod in module.static_files :
+    job_key => {
+      static_website_url = job_mod.static_website_url
+      cdn_url            = job_mod.cdn_url
+    }
+  }
+}
+
 ###############################################################################
 # 7️⃣  Entra ID Users / SPs
 ###############################################################################

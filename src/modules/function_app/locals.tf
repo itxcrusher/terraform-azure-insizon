@@ -32,29 +32,6 @@ locals {
 }
 
 ###############################################################################
-#  GitHub source-control helpers  (safe, trimmed values)
-###############################################################################
-locals {
-  # ---- Raw values directly from the object (may be null/blank) ----
-  raw_repo_url   = try(var.function_object.Github.repoUrl, "")
-  raw_branch     = try(var.function_object.Github.branch, "")
-  raw_pat_token  = try(var.function_object.Github.token, "") # token in YAML (rare)
-  raw_pat_inject = try(var.function_object.github_token, "") # token injected by root locals
-
-  # ---- Trim & coalesce (null-safe) ----
-  repo_url_safe = trimspace(coalesce(local.raw_repo_url, ""))
-  branch_safe   = trimspace(coalesce(local.raw_branch, var.function_object.Env))
-  token_safe    = trimspace(coalesce(local.raw_pat_token, local.raw_pat_inject, ""))
-
-  # ---- “Should Terraform create azurerm_app_service_source_control?” ----
-  enable_github_sc = (
-    local.token_safe != "" &&
-    local.repo_url_safe != "" &&
-    local.branch_safe != ""
-  )
-}
-
-###############################################################################
 #  Plan SKU map
 ###############################################################################
 locals {

@@ -12,3 +12,13 @@ output "vault_uri" {
   value       = azurerm_key_vault.this.vault_uri
   description = "Vault URI (https://<name>.vault.azure.net/)"
 }
+
+output "vault_id" {
+  value       = azurerm_key_vault.this.id
+  description = "Key Vault resource ID"
+}
+
+output "diagnostic_enabled" {
+  value       = var.log_analytics_workspace_id != ""
+  description = "True if diagnostics are enabled for Key Vault"
+}

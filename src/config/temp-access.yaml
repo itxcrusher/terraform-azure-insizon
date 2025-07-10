@@ -1,0 +1,7 @@
+temp_spns:
+  - Name: devops-audit-7d        # any slug, must be unique
+    Env: dev                     # optional tag
+    RoleName: Reader
+    Scopes:
+      - "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/insizon-app-dev-rg"
+    TTLHours: 168                # default 168 if omitted

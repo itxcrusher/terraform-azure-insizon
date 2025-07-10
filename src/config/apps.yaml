@@ -1,40 +1,75 @@
+# ────────────────────────────────────────────────────────────────
+#  🌐 Insizon Web App Configuration
+#  This YAML defines your App Service deployment and dependencies.
+#  Everything here feeds into the `webapp_object` input variable.
+# ────────────────────────────────────────────────────────────────
+
 apps:
-  - Name: insizon-app
-    Env: dev
+  - Name: "insizon-app"
+    Env: "dev"
 
-    # Required
-    KeyVaultName: insizon-dev-keyvault
+    # ── 🔐 Key Vault Integration ──
+    # Required for fetching secrets and config at runtime
+    KeyVaultName: "insizon-dev-keyvault"
 
-    # Optional Customizations
-    Location: centralus            # Default: centralus
-    OsType: Windows                # Options: Windows, Linux
-    Sku: D1                        # Free_F1, B1, S1, P1v3, etc.
-    DotnetVersion: v8.0            # Used only if OsType is Windows
-    NodeVersion: ""                # Used only if OsType is Linux and runtime is node
-    AlwaysOn: false                # Azure blocks always_on = true on F1 / D1 plans.
+    # ── 📍 Azure Region and Platform ──
+    Location: "centralus"       # Default is centralus if not specified
+    OsType: "Windows"           # Options: Windows or Linux
+    Sku: "B1"                   # ⚠️ Must be B1 or higher if using CustomDomain or AlwaysOn
 
-    # Enable/disable optional resources
-    CreateAppInsight: true
-    CreateLogicApp: false
+    # ── ⚙️ Runtime Configuration ──
+    DotnetVersion: "v8.0"       # Used for Windows apps
+    NodeVersion: ""             # Used for Linux apps with Node.js
 
-    Github:
-      # repoUrl: "https://github.com/insizon/insizon-dotnet"
-      # branch: dev
-      repoUrl: "https://github.com/itxcrusher/insizon-sample-repo"
-      branch: webapp
+    # ── 🔄 App Service Behavior ──
+    AlwaysOn: true              # ⚠️ Fails validation if Sku is F1 or D1
 
+    # 🛡️ TLS & SAS Settings
+    MinTLSVersion: "TLS1_2"     # Minimum TLS version for secure connections
+    UseSas: true                # Enables SAS token generation for storage accounts
+    SasExpiryYears: 10          # SAS token expiry in years (default is 10)
+
+    # ── ☁️ Storage Account Config ──
+    StorageConfig:              # Configuration for attached storage accounts
+      AccountName: "insizonfilestatic1"  # Primary storage account name
+      Tier: "Standard"          # Storage account tier (Standard or Premium)
+      Replication: "LRS"        # Replication type (LRS, GRS, etc.)
+      PublicAccess: false
+      OnlyHttp: true
+      PublicNestedItems: false
+      MinTLSVersion: "TLS1_2"  # Minimum TLS version for storage access
+      UseCDN: true  # Enables CDN for static content delivery
+
+    # ── 🧠 Monitoring & Integration ──
+    CreateAppInsight: true      # Enables Application Insights
+    CreateLogicApp: false       # Optional Logic App workflow binding
+
+    # ── 🌐 Custom Domain Settings ──
     CustomDomain:
-      # URL: "www.insizon.com"
-      URL: "insizon.muhammadhassaanjaved.com"
+      URL: "insizon.muhammadhassaanjaved.com"  # Required if using custom hostname
+      ZoneName: "muhammadhassaanjaved.com"     # DNS zone name (only if managed_by_azure is true)
+      DnsZoneRG: "dns-core-rg"                 # DNS resource group
+      UseManagedCert: false                    # Azure-managed SSL cert
+      managed_by_azure: false                  # true if DNS is in Azure
 
+    # ── 📁 Attached Storage Accounts ──
     StorageAccount:
-      - insizonfilestatic1
-      - insizonmediaassets2
+      - "insizonfilestatic1"
+      - "insizonmediaassets2"
 
+    # ── 🧬 Database Settings ──
     Database:
-      Type: SQL                    # Options: SQL or PostgreSQL
-      ServerAdminLogin: adminuser
-      Password: "${DB_PASSWORD}"  # Securely injected via tfvars, not hardcoded
-      Sku: GP_S_Gen5_2
+      Type: "SQL"                   # Options: SQL or PostgreSQL
+      ServerAdminLogin: "adminuser"
+      Password: "${DB_PASSWORD}"    # Inject via env.tfvars
+      Sku: "GP_S_Gen5_2"
       SizeGB: 5
-      MinCapacity: 0.5
+      MinCapacity: 0.5              # Optional for auto-pause or scaling
+
+    # ── ⚡ Redis Cache ──
+    Redis:
+      create_service: true
+      sku_name: "Standard"          # Options: Basic, Standard, Premium
+      capacity: 1                   # Size tier (0–6)
+      family: "C"                   # C = Basic/Standard, P = Premium
+      enable_non_ssl_port: false

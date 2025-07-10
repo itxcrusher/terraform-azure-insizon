@@ -27,9 +27,19 @@ resource "azurerm_cdn_endpoint" "endpoint" {
   location            = "global"
 
   origin {
-    name      = "blob-origin"
-    host_name = trimsuffix(azurerm_storage_account.sa.primary_blob_endpoint, "/")
+    name      = "static-origin"
+    host_name = trimsuffix(azurerm_storage_account.sa.primary_web_endpoint, "/")
   }
+
+  depends_on = [azurerm_storage_account_static_website.web]
+}
+
+resource "azurerm_cdn_endpoint_custom_domain" "cdn_domain" {
+  count            = var.file_object.create_cdn && local.custom_domain_enabled ? 1 : 0
+  name             = replace(var.file_object.custom_domain, ".", "-")
+  cdn_endpoint_id  = azurerm_cdn_endpoint.endpoint[0].id
+  host_name        = var.file_object.custom_domain
+  depends_on = [azurerm_storage_account_static_website.web]
 }
 
 resource "azurerm_storage_account" "sa" {
@@ -38,24 +48,23 @@ resource "azurerm_storage_account" "sa" {
   location                 = azurerm_resource_group.rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-
-  # allow_blob_public_access is not supported in this provider version.
-  min_tls_version = "TLS1_2"
+  min_tls_version          = "TLS1_2"
 
   network_rules {
-    default_action             = var.file_object.create_cdn ? "Deny" : "Allow"
-    bypass                     = ["AzureServices"]
-    ip_rules                   = var.file_object.create_cdn ? ["0.0.0.0/0"] : []
-    virtual_network_subnet_ids = []
+    default_action = "Deny"
+    bypass         = ["AzureServices", "AzureFrontDoorService", "MicrosoftCDN"]
+    ip_rules       = []
   }
 
-  # Uncomment if you plan to serve static-website directly (not via CDN)
-  # static_website {
-  #   index_document = "index.html"
-  #   error_404_document = "404.html"
-  # }
-
   tags = local.tags
+}
+
+resource "azurerm_storage_account_static_website" "web" {
+  count              = var.enable_static_website ? 1 : 0
+  storage_account_id = azurerm_storage_account.sa.id
+
+  index_document = var.static_website_index != null ? var.static_website_index : fileexists("${local.src_folder}/index.html") ? "index.html" : null
+  error_404_document = var.error_404_document != null ? var.error_404_document : fileexists("${local.src_folder}/404.html") ? "404.html" : null
 }
 
 resource "azurerm_storage_blob" "upload" {
@@ -81,4 +90,7 @@ resource "azurerm_storage_blob" "upload" {
     lower(regex("[^.]+$", each.value)),
     "application/octet-stream"
   )
+  metadata = {
+    "Cache-Control" = "public, max-age=31536000"
+  }
 }

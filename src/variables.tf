@@ -1,12 +1,5 @@
 # Core variables passed via tfvars per environment
 
-variable "github_token" {
-  type        = string
-  description = "GitHub personal access token for private repo access"
-  sensitive   = true
-  default     = ""
-}
-
 variable "client_id" {
   type        = string
   description = "Azure client ID for Terraform service principal"

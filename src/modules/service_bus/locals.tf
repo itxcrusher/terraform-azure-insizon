@@ -3,25 +3,44 @@
 ################################################################################
 
 locals {
-  # Base slug
-  bus_name = "${var.bus_object.Name}-${var.bus_object.Env}"
+  # Grouped buses per name for looping
+  bus_map = {
+    for bus in var.bus_objects : "${bus.Name}-${bus.Env}" => bus
+  }
 
-  # Namespace name must be ≤50 chars and cannot contain underscores.
-  ns_name = substr(replace("${local.bus_name}-ns", "_", "-"), 0, 50)
-
-  # Resource-group unique to this namespace (easy tear-down).
-  rg_name = "${local.bus_name}-sb-rg"
-
-  sku = var.bus_object.Sku
+  rg_name = "sb-${var.bus_objects[0].Env}-rg"
 
   tags = {
-    Environment = var.bus_object.Env
-    Application = var.bus_object.Name
+    Environment = var.bus_objects[0].Env
     Module      = "service_bus"
     ManagedBy   = "Terraform"
   }
 
-  # Convert lists → maps for for_each convenience.
-  topics_map = { for t in var.bus_object.Topics : t.name => t }
-  queues_map = { for q in var.bus_object.Queues : q.name => q }
+  # Topics
+  all_topics = flatten([
+    for bus in var.bus_objects : [
+      for t in bus.Topics : {
+        key       = "${bus.Name}-${t.name}"
+        topic     = t
+        ns_name   = "${bus.Name}-${bus.Env}-ns"
+        app_key   = try(q.TargetApp, null)
+      }
+    ]
+  ])
+
+  topics_map = { for t in local.all_topics : t.key => t }
+
+  # Queues
+  all_queues = flatten([
+    for bus in var.bus_objects : [
+      for q in bus.Queues : {
+        key       = "${bus.Name}-${q.name}"
+        queue     = q
+        ns_name   = "${bus.Name}-${bus.Env}-ns"
+        app_key   = try(q.TargetApp, null)
+      }
+    ]
+  ])
+
+  queues_map = { for q in local.all_queues : q.key => q }
 }

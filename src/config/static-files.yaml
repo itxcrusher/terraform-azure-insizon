@@ -3,6 +3,12 @@ files:
   - FolderName: public
     StorageAccountName: insizon-static-bucket
     ContainerName: public-assets
+    EnableStaticWebsite: true
+    StaticWebsiteIndex: index.html
+    Error404Document: 404.html
 
     FilesExcluded:
       - secret.txt
+
+    CustomDomain: static.insizon.muhammadhassaanjaved.com
+    

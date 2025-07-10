@@ -11,6 +11,11 @@ resource "azurerm_mssql_server" "sql_server" {
   administrator_login          = local.db_admin
   administrator_login_password = local.db_password
 
+  azuread_administrator {
+    login_username = "AzureAD Admin"
+    object_id      = var.Database_object.ObjectId
+  }
+
   lifecycle {
     prevent_destroy = false
     ignore_changes  = [administrator_login_password]
@@ -57,6 +62,15 @@ resource "azurerm_postgresql_flexible_server" "pg_server" {
   administrator_password = local.db_password
   storage_mb             = max(local.db_size * 1024, 32768)
 
+  authentication {
+    active_directory_auth_enabled = true
+    password_auth_enabled         = true # or false if you want strict AAD
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
   tags = local.tags
 }
 
@@ -69,4 +83,15 @@ resource "azurerm_postgresql_flexible_server_database" "pg_database" {
   collation = "en_US.utf8"
 
   # tags attribute is not supported in this provider version.
+}
+
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "aad_admin" {
+  count               = local.db_type == "postgresql" ? 1 : 0
+  server_name         = azurerm_postgresql_flexible_server.pg_server[0].name
+  resource_group_name = local.rg
+
+  object_id       = var.Database_object.ObjectId
+  tenant_id       = var.Database_object.TenantId
+  principal_type  = "User"
+  principal_name  = "AzureAD Admin"
 }
