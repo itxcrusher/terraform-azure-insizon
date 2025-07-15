@@ -33,6 +33,12 @@ resource "azurerm_role_assignment" "rbac" {
 ########################
 # 4)  Drop creds to disk
 ########################
+resource "null_resource" "mkdir_temp_access" {
+  provisioner "local-exec" {
+    command = "mkdir -p ${path.root}/private/entra_access_keys"
+  }
+}
+
 resource "local_file" "creds" {
   filename = "${path.root}/private/entra_access_keys/${var.name}.json"
   content = jsonencode({
@@ -43,4 +49,6 @@ resource "local_file" "creds" {
     expiry        = azuread_application_password.pwd.end_date
   })
   file_permission = "0600"
+
+  depends_on = [null_resource.mkdir_temp_access]
 }

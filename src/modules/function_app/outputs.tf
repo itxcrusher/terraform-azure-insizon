@@ -21,3 +21,8 @@ output "logic_app_id" {
   value       = local.enable_logic ? module.logic_app.logic_app_id : null
   description = "Logic App ID (if created)"
 }
+
+output "key_vault" {
+  description = "Key Vault created for this Function App"
+  value       = var.function_object.CreateKeyVault ? module.key_vault[0].vault_id : null
+}

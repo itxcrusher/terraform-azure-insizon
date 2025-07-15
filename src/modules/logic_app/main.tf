@@ -4,29 +4,16 @@ resource "azurerm_logic_app_workflow" "logic" {
   location            = var.location
   resource_group_name = var.resource_group_name
   tags                = var.tags
+
+  # Optional but keeps ARM happy
+  workflow_parameters = jsonencode({ "$connections" = {} })
+
+  # The full Logic App definition (triggers + actions) comes from root
+  definition = jsonencode(var.definition)
 }
 
-# ──────────────────────────────────────────────
-#  HTTP Trigger: Accepts incoming HTTP calls
-# ──────────────────────────────────────────────
-resource "azurerm_logic_app_trigger_http_request" "http_trigger" {
+data "azurerm_logic_app_trigger_callback_url" "manual" {
   count        = var.create_logic_app ? 1 : 0
-  name         = "manual"
   logic_app_id = azurerm_logic_app_workflow.logic[0].id
-  schema       = "{}"
-}
-
-# ──────────────────────────────────────────────
-#  Response Action: Sends back success message
-# ──────────────────────────────────────────────
-resource "azurerm_logic_app_action_response" "response" {
-  count        = var.create_logic_app ? 1 : 0
-  name         = "respondOK"
-  logic_app_id = azurerm_logic_app_workflow.logic[0].id
-  status_code  = 200
-  body = jsonencode({
-    message = "Logic App executed successfully!"
-  })
-
-  depends_on = [azurerm_logic_app_trigger_http_request.http_trigger]
+  trigger_name = "manual" # matches the trigger name inside JSON
 }

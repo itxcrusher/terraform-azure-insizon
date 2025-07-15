@@ -4,7 +4,7 @@ output "logic_app_id" {
 }
 
 output "trigger_callback_url" {
-  value       = var.create_logic_app ? azurerm_logic_app_trigger_http_request.http_trigger[0].callback_url : null
+  value       = var.create_logic_app ? data.azurerm_logic_app_trigger_callback_url.manual[0].value : null
   description = "Callback URL for the HTTP trigger"
   sensitive   = true
 }

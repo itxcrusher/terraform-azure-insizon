@@ -32,15 +32,6 @@ output "resource_group" {
   value       = azurerm_resource_group.sb_rg.name
 }
 
-output "queue_secret_names" {
-  value       = keys(azurerm_key_vault_secret.sb_queue_connections)
-  description = "Key Vault secret names for queues"
-}
-output "topic_secret_names" {
-  value       = keys(azurerm_key_vault_secret.sb_topic_connections)
-  description = "Key Vault secret names for topics"
-}
-
 output "connection_strings_per_queue" {
   description = "Map of queue name keys to connection string"
   value = {

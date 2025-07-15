@@ -5,7 +5,7 @@ resource "azurerm_dns_cname_record" "webapp_cname" {
   resource_group_name = local.dns_zone_rg
   ttl                 = 300
 
-  record              = local.windows_webapp_url != null ? local.windows_webapp_url : local.linux_webapp_url
+  record = local.windows_webapp_url != null ? local.windows_webapp_url : local.linux_webapp_url
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "domain" {
@@ -20,7 +20,7 @@ resource "azurerm_app_service_custom_hostname_binding" "domain" {
 }
 
 resource "azurerm_dns_txt_record" "asuid_validation" {
-  count               = local.zone_managed && local.use_managed_cert ? 1 : 0
+  count               = local.custom_domain_enabled && local.zone_managed && local.use_managed_cert ? 1 : 0
   name                = "asuid.${trimsuffix(local.custom_domain, ".${local.dns_zone_name}")}"
   zone_name           = local.dns_zone_name
   resource_group_name = local.dns_zone_rg
@@ -36,6 +36,6 @@ resource "azurerm_dns_txt_record" "asuid_validation" {
 }
 
 resource "azurerm_app_service_managed_certificate" "domain_tls" {
-  count               = local.zone_managed && local.use_managed_cert ? 1 : 0
+  count                      = local.custom_domain_enabled && local.zone_managed && local.use_managed_cert ? 1 : 0
   custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.domain[0].id
 }

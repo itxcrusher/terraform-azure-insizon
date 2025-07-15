@@ -9,7 +9,7 @@ locals {
 
   enable_app_insights = var.webapp_object.CreateAppInsight
   enable_logic_app    = var.webapp_object.CreateLogicApp
-  use_cdn = try(var.webapp_object.UseCDN, false)
+  use_cdn             = try(var.webapp_object.UseCDN, false)
 
   tags = {
     Environment = var.webapp_object.Env
@@ -26,13 +26,11 @@ locals {
   linux_webapp_url   = try(azurerm_linux_web_app.main[0].default_hostname, null)
 
   custom_domain_enabled = var.webapp_object.CustomDomain != null
-  zone_managed = custom_domain_enabled && try(var.webapp_object.CustomDomain.managed_by_azure, false)
 
-  dns_zone_name = zone_managed ? var.webapp_object.CustomDomain.ZoneName : null
-  dns_zone_rg   = zone_managed ? var.webapp_object.CustomDomain.DnsZoneRG : null
-  use_managed_cert = custom_domain_enabled && try(var.webapp_object.CustomDomain.UseManagedCert, true)
+  zone_managed     = local.custom_domain_enabled && try(var.webapp_object.CustomDomain.managed_by_azure, false)
+  dns_zone_name    = local.zone_managed ? var.webapp_object.CustomDomain.ZoneName : null
+  dns_zone_rg      = local.zone_managed ? var.webapp_object.CustomDomain.DnsZoneRG : null
+  use_managed_cert = local.custom_domain_enabled && try(var.webapp_object.CustomDomain.UseManagedCert, true)
 
-  custom_domain = (
-    custom_domain_enabled ? var.webapp_object.CustomDomain.URL : null
-  )
+  custom_domain = local.custom_domain_enabled ? var.webapp_object.CustomDomain.URL : null
 }

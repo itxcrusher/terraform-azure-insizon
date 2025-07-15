@@ -30,14 +30,14 @@ resource "azurerm_mssql_database" "sql_database" {
   server_id = azurerm_mssql_server.sql_server[0].id
 
   # ── core spec ───────────────────────────────────────────
-  sku_name    = local.db_sku            # GP_S_Gen5_2
-  max_size_gb = var.Database_object.SizeGB
-  collation   = local.sql_collation
+  sku_name     = local.db_sku # GP_S_Gen5_2
+  max_size_gb  = var.Database_object.SizeGB
+  collation    = local.sql_collation
   enclave_type = local.sql_enclave_type
-  license_type = local.license_type     # null for serverless
+  license_type = local.license_type # null for serverless
 
   # ── serverless tweaks ──────────────────────────────────
-  min_capacity               = local.min_capacity_final      # 0.5 for serverless
+  min_capacity                = local.min_capacity_final # 0.5 for serverless
   auto_pause_delay_in_minutes = local.is_serverless ? 60 : null
 
   lifecycle {
@@ -90,8 +90,8 @@ resource "azurerm_postgresql_flexible_server_active_directory_administrator" "aa
   server_name         = azurerm_postgresql_flexible_server.pg_server[0].name
   resource_group_name = local.rg
 
-  object_id       = var.Database_object.ObjectId
-  tenant_id       = var.Database_object.TenantId
-  principal_type  = "User"
-  principal_name  = "AzureAD Admin"
+  object_id      = var.Database_object.ObjectId
+  tenant_id      = var.Database_object.TenantId
+  principal_type = "User"
+  principal_name = "AzureAD Admin"
 }

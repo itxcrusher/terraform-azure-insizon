@@ -27,19 +27,20 @@ resource "azurerm_cdn_endpoint" "endpoint" {
   location            = "global"
 
   origin {
-    name      = "static-origin"
-    host_name = trimsuffix(azurerm_storage_account.sa.primary_web_endpoint, "/")
+    name       = "blob-origin"
+    host_name  = "${azurerm_storage_account.sa.name}.blob.core.windows.net"
+    https_port = 443
   }
 
   depends_on = [azurerm_storage_account_static_website.web]
 }
 
 resource "azurerm_cdn_endpoint_custom_domain" "cdn_domain" {
-  count            = var.file_object.create_cdn && local.custom_domain_enabled ? 1 : 0
-  name             = replace(var.file_object.custom_domain, ".", "-")
-  cdn_endpoint_id  = azurerm_cdn_endpoint.endpoint[0].id
-  host_name        = var.file_object.custom_domain
-  depends_on = [azurerm_storage_account_static_website.web]
+  count           = var.file_object.create_cdn && local.custom_domain_enabled ? 1 : 0
+  name            = replace(var.file_object.custom_domain, ".", "-")
+  cdn_endpoint_id = azurerm_cdn_endpoint.endpoint[0].id
+  host_name       = var.file_object.custom_domain
+  depends_on      = [azurerm_storage_account_static_website.web]
 }
 
 resource "azurerm_storage_account" "sa" {
@@ -52,8 +53,10 @@ resource "azurerm_storage_account" "sa" {
 
   network_rules {
     default_action = "Deny"
-    bypass         = ["AzureServices", "AzureFrontDoorService", "MicrosoftCDN"]
-    ip_rules       = []
+    bypass         = ["AzureServices"]
+    # Azure no longer supports "AzureFrontDoorService", "MicrosoftCDN" in the bypass field
+    # Enable traffic from Front Door / CDN via IP ranges or service tags
+    ip_rules = []
   }
 
   tags = local.tags
@@ -63,7 +66,7 @@ resource "azurerm_storage_account_static_website" "web" {
   count              = var.enable_static_website ? 1 : 0
   storage_account_id = azurerm_storage_account.sa.id
 
-  index_document = var.static_website_index != null ? var.static_website_index : fileexists("${local.src_folder}/index.html") ? "index.html" : null
+  index_document     = var.static_website_index != null ? var.static_website_index : fileexists("${local.src_folder}/index.html") ? "index.html" : null
   error_404_document = var.error_404_document != null ? var.error_404_document : fileexists("${local.src_folder}/404.html") ? "404.html" : null
 }
 

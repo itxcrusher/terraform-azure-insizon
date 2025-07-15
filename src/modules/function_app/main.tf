@@ -42,3 +42,22 @@ module "logic_app" {
   definition          = jsondecode(file("${path.module}/../../config/logic-definition.json")).definition
   tags                = local.tags
 }
+
+data "azurerm_client_config" "current" {}
+
+module "key_vault" {
+  count  = var.function_object.CreateKeyVault ? 1 : 0
+  source = "../key_vault"
+
+  keyvault_object = {
+    AppName               = var.function_object.Name
+    AppEnvironment        = var.function_object.Env
+    Rg_Location           = azurerm_resource_group.fa_rg.location
+    Rg_Name               = azurerm_resource_group.fa_rg.name
+    TenantId              = var.tenant_id
+    ObjectId              = data.azurerm_client_config.current.object_id
+    additional_principals = []
+  }
+
+  log_analytics_workspace_id = "" # Optional override if needed
+}

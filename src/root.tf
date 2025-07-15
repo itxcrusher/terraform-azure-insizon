@@ -1,7 +1,7 @@
 # Temporary Access SPN
 module "temp_spns" {
-  for_each   = local.temp_spns_by_name
-  source     = "./modules/temp_access_spn"
+  for_each = local.temp_spns_by_name
+  source   = "./modules/temp_access_spn"
 
   name        = each.value.name
   ttl_hours   = each.value.ttl
@@ -40,7 +40,7 @@ module "webapps" {
     }
   )
 
-  tenant_id = var.tenant_id
+  tenant_id     = var.tenant_id
   client_id     = module.app_registrations[each.key].client_id
   client_secret = module.app_registrations[each.key].client_secret
 }
@@ -50,6 +50,7 @@ module "function_apps" {
   for_each        = local.function_apps_by_name
   source          = "./modules/function_app"
   function_object = each.value
+  tenant_id       = var.tenant_id
 }
 
 # Service Bus
@@ -112,8 +113,8 @@ resource "azurerm_key_vault_secret" "sb_queue_connections" {
       k => {
         key     = "sb-${env}-${k}"
         value   = v
-        app_key = try(module.service_bus[env].queues_map[k].app_key, null)  # 🔍
-        kv_id   = try(local.key_vault_ids_by_app[ module.service_bus[env].queues_map[k].app_key ], null)
+        app_key = try(module.service_bus[env].queues_map[k].app_key, null) # 🔍
+        kv_id   = try(local.key_vault_ids_by_app[module.service_bus[env].queues_map[k].app_key], null)
       }
     }
   ]...)
@@ -123,7 +124,7 @@ resource "azurerm_key_vault_secret" "sb_queue_connections" {
   key_vault_id = each.value.kv_id
 
   lifecycle {
-    ignore_changes = [value]  # Optional: avoid churn if conn string changes
+    ignore_changes = [value] # Optional: avoid churn if conn string changes
   }
 }
 
@@ -135,7 +136,7 @@ resource "azurerm_key_vault_secret" "sb_topic_connections" {
         key     = "sb-${env}-${k}"
         value   = v
         app_key = try(module.service_bus[env].topics_map[k].app_key, null)
-        kv_id   = try(local.key_vault_ids_by_app[ module.service_bus[env].topics_map[k].app_key ], null)
+        kv_id   = try(local.key_vault_ids_by_app[module.service_bus[env].topics_map[k].app_key], null)
       }
     }
   ]...)

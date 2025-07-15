@@ -3,7 +3,7 @@ files:
   - FolderName: public
     StorageAccountName: insizon-static-bucket
     ContainerName: public-assets
-    EnableStaticWebsite: true
+    EnableStaticWebsite: false
     StaticWebsiteIndex: index.html
     Error404Document: 404.html
 

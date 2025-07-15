@@ -7,6 +7,6 @@ output "database_type" {
 }
 
 output "connection_string" {
-  description = "Fully qualified connection endpoint for the database"
-  value = length(azurerm_mssql_server.sql_server) == 1 ? azurerm_mssql_server.sql_server[0].fully_qualified_domain_name : azurerm_postgresql_flexible_server.pg_server[0].fully_qualified_domain_name
+  description = "Fully-qualified endpoint for whichever DB we created"
+  value       = length(azurerm_mssql_server.sql_server) == 1 ? azurerm_mssql_server.sql_server[0].fully_qualified_domain_name : azurerm_postgresql_flexible_server.pg_server[0].fqdn
 }

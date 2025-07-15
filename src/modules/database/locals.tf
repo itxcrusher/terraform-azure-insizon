@@ -24,8 +24,8 @@ locals {
 
   # If serverless → pick provided MinCapacity or fallback to 0.5
   min_capacity_final = local.is_serverless ? (
-        var.Database_object.MinCapacity != null ? var.Database_object.MinCapacity : 0.5
-      ) : null
+    var.Database_object.MinCapacity != null ? var.Database_object.MinCapacity : 0.5
+  ) : null
 
   # Tagging
   tags = {

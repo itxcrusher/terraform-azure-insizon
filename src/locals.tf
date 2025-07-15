@@ -20,9 +20,9 @@ locals {
   service_buses_by_env = {
     for env in distinct([for b in local.service_bus_config : b.Env]) :
     env => {
-      env   = env
+      env      = env
       location = try([for b in local.service_bus_config : b.Location if b.Env == env][0], "centralus")
-      buses = [for b in local.service_bus_config : b if b.Env == env]
+      buses    = [for b in local.service_bus_config : b if b.Env == env]
     }
   }
 
@@ -106,18 +106,18 @@ locals {
   role_assignments = flatten([
     for uname, user in local.users_config : [
       for role in user.roles : [
-        for app_key in (length(user.limit) > 0 ? user.limit : ["__subscription__"]) : {
-          username        = uname
-          role_name       = lookup(var.roles_lookup, role, "Reader")
-          scope           = (
+        for app_key in(length(user.limit) > 0 ? user.limit : ["__subscription__"]) : {
+          username  = uname
+          role_name = lookup(var.roles_lookup, role, "Reader")
+          scope = (
             app_key == "__subscription__" ? "/subscriptions/${var.subscription_id}" :
             contains(keys(module.webapps), app_key) ? module.webapps[app_key].resource_group_id :
             contains(keys(module.function_apps), app_key) ? module.function_apps[app_key].resource_group_id :
             contains(keys(module.service_bus), app_key) ? module.service_bus[app_key].resource_group_id :
             null
           )
-          principal_type  = contains(role, "serviceAccount") ? "ServicePrincipal" : "User"
-          app_key         = app_key
+          principal_type = contains(role, "serviceAccount") ? "ServicePrincipal" : "User"
+          app_key        = app_key
         }
       ]
     ]
@@ -135,23 +135,23 @@ locals {
 ###############################################################################
 # TEMP-SPNs CONFIG
 ###############################################################################
- locals {
-   temp_spns_config = yamldecode(file("${path.module}/config/temp-access.yaml")).temp_spns
+locals {
+  temp_spns_config = yamldecode(file("${path.module}/config/temp-access.yaml")).temp_spns
 
-   temp_spns_by_name = {
-     for s in local.temp_spns_config :
-     s.Name => {
-       name        = s.Name
-       role_name   = try(s.RoleName, "Reader")
-       scopes      = [
-         for raw in s.Scopes :
-         replace(
-           raw,
-           "${SUBSCRIPTION_ID}",
-           var.subscription_id
-         )
-       ]
-       ttl = tonumber(try(s.TTLHours, 168))
-     }
-   }
- }
+  temp_spns_by_name = {
+    for s in local.temp_spns_config :
+    s.Name => {
+      name      = s.Name
+      role_name = try(s.RoleName, "Reader")
+      scopes = [
+        for raw in s.Scopes :
+        replace(
+          raw,
+          "${SUBSCRIPTION_ID}",
+          var.subscription_id
+        )
+      ]
+      ttl = tonumber(try(s.TTLHours, 168))
+    }
+  }
+}

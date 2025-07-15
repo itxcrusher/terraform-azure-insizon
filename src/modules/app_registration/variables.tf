@@ -9,8 +9,8 @@ variable "owner_ids" {
 }
 
 variable "redirect_uris" {
-  type        = list(string)
-  default     = []
+  type    = list(string)
+  default = []
 }
 
 variable "app_roles" {

@@ -2,6 +2,7 @@
 function_apps:
   - Name: insizon-trigger
     Env: dev
+    CreateKeyVault: true
     Hosting:
       Type: Linux         # or "Windows"
       Plan: Consumption   # Options: Consumption, FlexConsumption, AppService

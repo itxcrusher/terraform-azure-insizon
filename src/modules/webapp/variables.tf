@@ -2,37 +2,37 @@ variable "webapp_object" {
   description = "Full configuration for a single web app"
   type = object({
     # ── existing fields ──────────────────────────────────────────
-    Name              = string
-    Env               = string
-    Location          = optional(string, "centralus")
-    OsType            = optional(string, "Windows")
-    Sku               = optional(string, "D1")
-    DotnetVersion     = optional(string, "v8.0")
-    NodeVersion       = optional(string, "")
-    AlwaysOn          = optional(bool, false)
+    Name          = string
+    Env           = string
+    Location      = optional(string, "centralus")
+    OsType        = optional(string, "Windows")
+    Sku           = optional(string, "D1")
+    DotnetVersion = optional(string, "v8.0")
+    NodeVersion   = optional(string, "")
+    AlwaysOn      = optional(bool, false)
 
-    CreateAppInsight  = optional(bool, false)
-    CreateLogicApp    = optional(bool, false)
-    StorageAccount = optional(list(string), [])
-    UseSas         = optional(bool, false)
-    SasExpiryYears = optional(number, 10)
-    UseCDN = optional(bool, false)
+    CreateAppInsight = optional(bool, false)
+    CreateLogicApp   = optional(bool, false)
+    StorageAccount   = optional(list(string), [])
+    UseSas           = optional(bool, false)
+    SasExpiryYears   = optional(number, 10)
+    UseCDN           = optional(bool, false)
 
     CustomDomain = optional(object({
-      URL              = string                     # required
-      managed_by_azure = optional(bool, false)      # true → zone in Azure
-      ZoneName         = optional(string)           # needed only if managed_by_azure = true
-      DnsZoneRG        = optional(string)           #   "
+      URL              = string                # required
+      managed_by_azure = optional(bool, false) # true → zone in Azure
+      ZoneName         = optional(string)      # needed only if managed_by_azure = true
+      DnsZoneRG        = optional(string)      #   "
       UseManagedCert   = optional(bool, true)
-    }), null)    
+    }), null)
 
     StorageConfig = optional(object({
-      Tier               = optional(string, "Standard")
-      Replication        = optional(string, "LRS")
-      PublicAccess       = optional(bool, false)
-      OnlyHttp           = optional(bool, true)
-      PublicNestedItems  = optional(bool, false)
-      MinTLSVersion      = optional(string, "TLS1_2")
+      Tier              = optional(string, "Standard")
+      Replication       = optional(string, "LRS")
+      PublicAccess      = optional(bool, false)
+      OnlyHttp          = optional(bool, true)
+      PublicNestedItems = optional(bool, false)
+      MinTLSVersion     = optional(string, "TLS1_2")
     }), null)
 
     Database = optional(object({
@@ -45,11 +45,11 @@ variable "webapp_object" {
 
     # ── NEW: Redis block (fully optional) ────────────────────────
     Redis = optional(object({
-      create_service       = optional(bool, false)
-      sku_name             = optional(string, "Basic")
-      capacity             = optional(number, 0)
-      family               = optional(string, "C")
-      enable_non_ssl_port  = optional(bool, false)
+      create_service      = optional(bool, false)
+      sku_name            = optional(string, "Basic")
+      capacity            = optional(number, 0)
+      family              = optional(string, "C")
+      enable_non_ssl_port = optional(bool, false)
     }), null)
 
     ObjectId = string

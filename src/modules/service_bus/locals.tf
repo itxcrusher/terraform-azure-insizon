@@ -20,10 +20,10 @@ locals {
   all_topics = flatten([
     for bus in var.bus_objects : [
       for t in bus.Topics : {
-        key       = "${bus.Name}-${t.name}"
-        topic     = t
-        ns_name   = "${bus.Name}-${bus.Env}-ns"
-        app_key   = try(q.TargetApp, null)
+        key     = "${bus.Name}-${t.name}"
+        topic   = t
+        ns_name = "${bus.Name}-${bus.Env}-ns"
+        app_key = try(t.TargetApp, null)
       }
     ]
   ])
@@ -34,10 +34,10 @@ locals {
   all_queues = flatten([
     for bus in var.bus_objects : [
       for q in bus.Queues : {
-        key       = "${bus.Name}-${q.name}"
-        queue     = q
-        ns_name   = "${bus.Name}-${bus.Env}-ns"
-        app_key   = try(q.TargetApp, null)
+        key     = "${bus.Name}-${q.name}"
+        queue   = q
+        ns_name = "${bus.Name}-${bus.Env}-ns"
+        app_key = try(q.TargetApp, null)
       }
     ]
   ])

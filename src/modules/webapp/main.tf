@@ -113,13 +113,13 @@ module "key_vault" {
   source = "../key_vault"
 
   keyvault_object = {
-    AppName               = var.webapp_object.Name
-    AppEnvironment        = var.webapp_object.Env
-    Rg_Location           = azurerm_resource_group.main.location
-    Rg_Name               = azurerm_resource_group.main.name
-    TenantId              = var.tenant_id
-    ObjectId              = var.webapp_object.ObjectId
-    additional_principals = try(var.webapp_object.additional_principals, [])
+    AppName                    = var.webapp_object.Name
+    AppEnvironment             = var.webapp_object.Env
+    Rg_Location                = azurerm_resource_group.main.location
+    Rg_Name                    = azurerm_resource_group.main.name
+    TenantId                   = var.tenant_id
+    ObjectId                   = var.webapp_object.ObjectId
+    additional_principals      = try(var.webapp_object.additional_principals, [])
     log_analytics_workspace_id = var.law_id
   }
 }
@@ -142,10 +142,10 @@ resource "azurerm_key_vault_secret" "app_client_secret" {
 
 # Grant cert‐rotation permissions when using a custom domain without Azure-managed cert
 resource "azurerm_role_assignment" "kv_certificates_officer" {
-  count = local.custom_domain_enabled && !use_managed_cert ? 1 : 0
+  count = local.custom_domain_enabled && !local.use_managed_cert ? 1 : 0
 
   scope                = module.key_vault.vault_id
-  principal_id         = var.webapp_object.ObjectId      # service principal / SPN that needs cert access
+  principal_id         = var.webapp_object.ObjectId # service principal / SPN that needs cert access
   role_definition_name = "Key Vault Certificates Officer"
   principal_type       = "ServicePrincipal"
 }
@@ -155,21 +155,21 @@ resource "azurerm_role_assignment" "kv_certificates_officer" {
 ###############################################################################
 module "redis_cache" {
   source = "../redis"
-  count  = (
+  count = (
     var.webapp_object.Redis != null &&
     try(var.webapp_object.Redis.create_service, false)
   ) ? 1 : 0
 
-  create_service        = true
-  name_prefix           = local.app_name
-  location              = azurerm_resource_group.main.location
-  resource_group_name   = azurerm_resource_group.main.name
+  create_service      = true
+  name_prefix         = local.app_name
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
 
-  sku_name              = try(var.webapp_object.Redis.sku_name, "Basic")
-  capacity              = try(var.webapp_object.Redis.capacity, 0)
-  family                = try(var.webapp_object.Redis.family, "C")
-  non_ssl_port_enabled  = try(var.webapp_object.Redis.enable_non_ssl_port, false) # backward-compat
-  tags                  = local.tags
+  sku_name             = try(var.webapp_object.Redis.sku_name, "Basic")
+  capacity             = try(var.webapp_object.Redis.capacity, 0)
+  family               = try(var.webapp_object.Redis.family, "C")
+  non_ssl_port_enabled = try(var.webapp_object.Redis.enable_non_ssl_port, false) # backward-compat
+  tags                 = local.tags
 }
 
 # Optional: store Redis key in the vault
@@ -213,16 +213,16 @@ resource "azurerm_key_vault_secret" "db_connection" {
 # Storage Account
 ###############################################################################
 resource "azurerm_storage_account" "attached" {
-  for_each                          = { for sa in var.webapp_object.StorageAccount : sa => sa }
-  name                              = substr(lower(each.key), 0, 24)
-  location                          = azurerm_resource_group.main.location
-  resource_group_name               = azurerm_resource_group.main.name
-  account_tier                      = var.webapp_object.StorageConfig.Tier
-  account_replication_type          = var.webapp_object.StorageConfig.Replication
-  public_network_access_enabled     = var.webapp_object.StorageConfig.PublicAccess
-  https_traffic_only_enabled        = var.webapp_object.StorageConfig.OnlyHttp
-  allow_nested_items_to_be_public   = var.webapp_object.StorageConfig.PublicNestedItems
-  min_tls_version                   = var.webapp_object.StorageConfig.MinTLSVersion
+  for_each                        = { for sa in var.webapp_object.StorageAccount : sa => sa }
+  name                            = substr(lower(each.key), 0, 24)
+  location                        = azurerm_resource_group.main.location
+  resource_group_name             = azurerm_resource_group.main.name
+  account_tier                    = var.webapp_object.StorageConfig.Tier
+  account_replication_type        = var.webapp_object.StorageConfig.Replication
+  public_network_access_enabled   = var.webapp_object.StorageConfig.PublicAccess
+  https_traffic_only_enabled      = var.webapp_object.StorageConfig.OnlyHttp
+  allow_nested_items_to_be_public = var.webapp_object.StorageConfig.PublicNestedItems
+  min_tls_version                 = var.webapp_object.StorageConfig.MinTLSVersion
 
   network_rules {
     default_action = "Deny"
@@ -238,7 +238,7 @@ resource "azurerm_storage_account_sas" "attached" {
   connection_string = azurerm_storage_account.attached[each.key].primary_connection_string
 
   https_only = true
-  start  = formatdate("YYYY-MM-DD", timestamp())
+  start      = formatdate("YYYY-MM-DD", timestamp())
   expiry = formatdate(
     "YYYY-MM-DD",
     timeadd(timestamp(), "${var.webapp_object.SasExpiryYears * 8760}h")
@@ -256,13 +256,13 @@ resource "azurerm_storage_account_sas" "attached" {
     table = false
   }
   permissions {
-    read   = true
-    write  = false
-    delete = false
-    list   = true
-    add    = false
-    create = false
-    update = false
+    read    = true
+    write   = false
+    delete  = false
+    list    = true
+    add     = false
+    create  = false
+    update  = false
     process = false
   }
 }

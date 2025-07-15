@@ -11,9 +11,9 @@ variable "file_object" {
     FilesExcluded      = optional(list(string), [])
 
     # Optional flags
-    create_cdn = optional(bool, false)
-    location   = optional(string, "centralus")
-    custom_domain  = optional(string)   # e.g. "static.insizon.com"
+    create_cdn    = optional(bool, false)
+    location      = optional(string, "centralus")
+    custom_domain = optional(string) # e.g. "static.insizon.com"
   })
 }
 

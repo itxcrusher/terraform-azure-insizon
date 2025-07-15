@@ -4,6 +4,7 @@ variable "function_object" {
     Name = string
     Env  = string
 
+
     Hosting = object({
       Type = string # Linux | Windows
       Plan = string # Consumption | FlexConsumption | AppService
@@ -16,6 +17,7 @@ variable "function_object" {
 
     CreateAppInsight = optional(bool, false)
     CreateLogicApp   = optional(bool, false)
+    CreateKeyVault   = optional(bool, false)
   })
 
   ### --- ENUM VALIDATIONS ---
@@ -43,4 +45,10 @@ variable "location" {
   type        = string
   description = "Azure region for the Function App resources"
   default     = "centralus"
+}
+
+variable "tenant_id" {
+  description = "Tenant id from tfvars"
+  type        = string
+  sensitive   = true
 }

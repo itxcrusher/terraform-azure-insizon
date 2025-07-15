@@ -1,10 +1,10 @@
 variable "Database_object" {
   description = "Database config"
   type = object({
-    AppName          = string
-    AppEnvironment   = string
-    Rg_Location      = string
-    Rg_Name          = string
+    AppName        = string
+    AppEnvironment = string
+    Rg_Location    = string
+    Rg_Name        = string
 
     Type             = string # "SQL" | "PostgreSQL"
     ServerAdminLogin = string
@@ -14,11 +14,11 @@ variable "Database_object" {
     Collation        = optional(string, "SQL_Latin1_General_CP1_CI_AS")
     EnclaveType      = optional(string, "Default")
     LicenseType      = optional(string, "LicenseIncluded")
-    MinCapacity      = optional(number)     # serverless only
-    MaxCapacity      = optional(number)     # serverless only
+    MinCapacity      = optional(number) # serverless only
+    MaxCapacity      = optional(number) # serverless only
 
-    ObjectId         = string # Entra admin object ID for DB
-    TenantId         = string # Azure tenant ID
+    ObjectId = string # Entra admin object ID for DB
+    TenantId = string # Azure tenant ID
   })
 
   validation {

@@ -6,7 +6,7 @@ variable "name" {
 variable "ttl_hours" {
   description = "Lifetime of the client secret in hours"
   type        = number
-  default     = 168   # 7 days
+  default     = 168 # 7 days
 }
 
 variable "role_name" {
