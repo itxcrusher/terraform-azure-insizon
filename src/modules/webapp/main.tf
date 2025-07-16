@@ -48,11 +48,11 @@ resource "azurerm_windows_web_app" "main" {
     },
     {
       for idx, sa in var.webapp_object.StorageAccount :
-      "STORAGE_${idx}_SAS" => azurerm_storage_account_sas.attached[sa].sas
+      "STORAGE_${idx}_SAS" => data.azurerm_storage_account_sas.attached[sa].sas
     },
     local.use_cdn ? {
       # Inject the CDN URL as an env var when UseCDN = true
-      "CDN_BASE_URL" = try("https://${azurerm_cdn_endpoint.webapp_cdn_endpoint[0].host_name}", "")
+      "CDN_BASE_URL" = local.use_cdn ? "https://${local.app_name}-endpoint.azureedge.net" : ""
     } : {}
   )
 }
@@ -93,15 +93,12 @@ resource "azurerm_linux_web_app" "main" {
     # 4) SAS tokens for each attached storage account
     {
       for idx, sa in var.webapp_object.StorageAccount :
-      "STORAGE_${idx}_SAS" => azurerm_storage_account_sas.attached[sa].sas
+      "STORAGE_${idx}_SAS" => data.azurerm_storage_account_sas.attached[sa].sas
     },
 
     # 5) CDN base URL—only when UseCDN is true
     local.use_cdn ? {
-      "CDN_BASE_URL" = try(
-        "https://${azurerm_cdn_endpoint.webapp_cdn_endpoint[0].host_name}",
-        ""
-      )
+      "CDN_BASE_URL" = local.use_cdn ? "https://${local.app_name}-endpoint.azureedge.net" : ""
     } : {}
   )
 }
@@ -226,35 +223,33 @@ resource "azurerm_storage_account" "attached" {
 
   network_rules {
     default_action = "Deny"
-    bypass         = ["AzureServices", "AzureFrontDoorService", "MicrosoftCDN"]
+    bypass         = ["AzureServices"]
   }
 
   tags = local.tags
 }
 
-resource "azurerm_storage_account_sas" "attached" {
-  for_each = azurerm_storage_account.attached
-
-  connection_string = azurerm_storage_account.attached[each.key].primary_connection_string
+data "azurerm_storage_account_sas" "attached" {
+  for_each           = azurerm_storage_account.attached
+  connection_string  = each.value.primary_connection_string
 
   https_only = true
   start      = formatdate("YYYY-MM-DD", timestamp())
-  expiry = formatdate(
-    "YYYY-MM-DD",
-    timeadd(timestamp(), "${var.webapp_object.SasExpiryYears * 8760}h")
-  )
+  expiry     = formatdate("YYYY-MM-DD", timeadd(timestamp(), "${var.webapp_object.SasExpiryYears * 8760}h"))
 
   resource_types {
     service   = true
     container = true
     object    = true
   }
+
   services {
     blob  = true
     file  = true
     queue = false
     table = false
   }
+
   permissions {
     read    = true
     write   = false
@@ -264,6 +259,8 @@ resource "azurerm_storage_account_sas" "attached" {
     create  = false
     update  = false
     process = false
+    tag     = false
+    filter  = false
   }
 }
 
@@ -314,6 +311,5 @@ module "logic_app" {
   name_prefix         = local.app_name
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
-  definition          = jsondecode(file("${path.module}/../../config/logic-definition.json")).definition
   tags                = local.tags
 }

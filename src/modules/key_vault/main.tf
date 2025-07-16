@@ -38,7 +38,7 @@ resource "azurerm_monitor_diagnostic_setting" "keyvault_logs" {
 # ─────────────────────────────────────────────────────────────
 resource "azurerm_role_assignment" "kv_rbac" {
   for_each = {
-    for pa in local.principal_assignments :
+    for pa in var.additional_principals :
     "${pa.principal_id}-${pa.role}" => pa
   }
 

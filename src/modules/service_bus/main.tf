@@ -39,7 +39,7 @@ resource "azurerm_servicebus_queue" "queue" {
   for_each = local.queues_map
 
   name                = each.value.queue.name
-  namespace_id        = azurerm_servicebus_namespace.ns[each.value.ns_name].id
+  namespace_id        = azurerm_servicebus_namespace.ns[replace(each.value.ns_name, "-ns", "")].id
   max_delivery_count  = each.value.queue.MaxDeliveryCount
   default_message_ttl = each.value.queue.MessageTTL
 }
@@ -49,7 +49,7 @@ resource "azurerm_servicebus_topic" "topic" {
   for_each = local.topics_map
 
   name                  = each.value.topic.name
-  namespace_id          = azurerm_servicebus_namespace.ns[each.value.ns_name].id
+  namespace_id          = azurerm_servicebus_namespace.ns[replace(each.value.ns_name, "-ns", "")].id
   max_size_in_megabytes = each.value.topic.MaxTopicSize
   default_message_ttl   = each.value.topic.MessageTTL
 }

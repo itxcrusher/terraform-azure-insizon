@@ -42,7 +42,7 @@ resource "null_resource" "mkdir_temp_access" {
 resource "local_file" "creds" {
   filename = "${path.root}/private/entra_access_keys/${var.name}.json"
   content = jsonencode({
-    client_id     = azuread_application.app.application_id
+    client_id     = azuread_application.app.client_id
     client_secret = azuread_application_password.pwd.value
     tenant_id     = var.tenant_id
     object_id     = azuread_service_principal.spn.id

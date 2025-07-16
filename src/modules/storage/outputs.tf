@@ -29,6 +29,7 @@ output "static_website_url" {
 }
 
 output "cdn_url" {
-  description = "Public CDN URL"
-  value       = try("https://${azurerm_cdn_endpoint_custom_domain.cdn_domain[0].host_name}", try(azurerm_cdn_endpoint.endpoint[0].host_name, null))
+  value = var.file_object.custom_domain != null ? "https://${var.file_object.custom_domain}" : (
+        length(azurerm_cdn_endpoint.endpoint) > 0 ? "https://${azurerm_cdn_endpoint.endpoint[0].name}.azureedge.net" : null
+      )
 }

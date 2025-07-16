@@ -39,7 +39,6 @@ module "logic_app" {
   name_prefix         = local.app_name
   location            = azurerm_resource_group.fa_rg.location
   resource_group_name = azurerm_resource_group.fa_rg.name
-  definition          = jsondecode(file("${path.module}/../../config/logic-definition.json")).definition
   tags                = local.tags
 }
 
@@ -56,7 +55,7 @@ module "key_vault" {
     Rg_Name               = azurerm_resource_group.fa_rg.name
     TenantId              = var.tenant_id
     ObjectId              = data.azurerm_client_config.current.object_id
-    additional_principals = []
+    additional_principals = var.additional_principals
   }
 
   log_analytics_workspace_id = "" # Optional override if needed

@@ -38,7 +38,7 @@ locals {
 locals {
   additional_principals_by_app_env = {
     for app_key in keys(local.apps_by_name) : app_key => flatten([
-      for uname, user in local.users_config : [
+      for uname, user in local.users_by_name : [
         for role in user.roles : {
           principal_id   = module.entra_id_users.user_object_ids[uname]
           role           = lookup(var.roles_lookup, role, "Reader")
@@ -52,7 +52,7 @@ locals {
 
 locals {
   service_bot_by_app = {
-    for uname, user in local.users_config :
+    for uname, user in local.users_by_name :
     uname => user
     if contains(user.roles, "serviceAccount")
   }
@@ -68,7 +68,7 @@ locals {
 locals {
   key_vault_ids_by_app = {
     for app_key, app in local.apps_by_name :
-    app_key => module.webapps[app_key].key_vault.vault_id
+    app_key => module.webapps[app_key].key_vault_uri
   }
 }
 
@@ -102,21 +102,38 @@ locals {
 ###############################################################################
 # 6.  RBAC logic
 ###############################################################################
+# Phase 1: Assignments for subscription-scoped users
 locals {
-  role_assignments = flatten([
-    for uname, user in local.users_config : [
+  role_assignments_sub_scope = flatten([
+    for uname, user in local.users_by_name : [
       for role in user.roles : [
-        for app_key in(length(user.limit) > 0 ? user.limit : ["__subscription__"]) : {
-          username  = uname
-          role_name = lookup(var.roles_lookup, role, "Reader")
-          scope = (
-            app_key == "__subscription__" ? "/subscriptions/${var.subscription_id}" :
+        {
+          username       = uname
+          role_name      = lookup(var.roles_lookup, role, "Reader")
+          scope          = "/subscriptions/${var.subscription_id}"
+          principal_type = role == "serviceAccount" ? "ServicePrincipal" : "User"
+        }
+      ]
+      if length(user.limit) == 0 || contains(user.limit, "__subscription__")
+    ]
+  ])
+}
+
+# Phase 2: Assignments for users limited to apps (webapps, functions, buses)
+locals {
+  role_assignments_resource_scope = flatten([
+    for uname, user in local.users_by_name : [
+      for role in user.roles : [
+        for app_key in user.limit : {
+          username       = uname
+          role_name      = lookup(var.roles_lookup, role, "Reader")
+          scope          = (
             contains(keys(module.webapps), app_key) ? module.webapps[app_key].resource_group_id :
             contains(keys(module.function_apps), app_key) ? module.function_apps[app_key].resource_group_id :
             contains(keys(module.service_bus), app_key) ? module.service_bus[app_key].resource_group_id :
             null
           )
-          principal_type = contains(role, "serviceAccount") ? "ServicePrincipal" : "User"
+          principal_type = role == "serviceAccount" ? "ServicePrincipal" : "User"
           app_key        = app_key
         }
       ]
@@ -125,10 +142,24 @@ locals {
 }
 
 locals {
+  valid_app_keys = concat(
+    keys(module.webapps),
+    keys(module.function_apps),
+    keys(module.service_bus)
+  )
+
+  role_assignments_map = {
+    for item in local.role_assignments_resource_scope :
+    "${item.username}-${item.role_name}-${item.app_key}" => item
+    if contains(local.valid_app_keys, item.app_key)
+  }
+}
+
+locals {
   missing_scopes = [
-    for item in local.role_assignments :
+    for item in local.role_assignments_resource_scope :
     item.app_key
-    if item.app_key != "__subscription__" && item.scope == null
+    if item.scope == null
   ]
 }
 
@@ -145,11 +176,7 @@ locals {
       role_name = try(s.RoleName, "Reader")
       scopes = [
         for raw in s.Scopes :
-        replace(
-          raw,
-          "${SUBSCRIPTION_ID}",
-          var.subscription_id
-        )
+        replace(raw, "$${SUBSCRIPTION_ID}", var.subscription_id)
       ]
       ttl = tonumber(try(s.TTLHours, 168))
     }

@@ -50,3 +50,13 @@ variable "log_analytics_workspace_id" {
   description = "Resource ID of the Log Analytics Workspace for diagnostic settings."
   default     = ""
 }
+
+variable "additional_principals" {
+  description = "List of RBAC assignments for this Key Vault"
+  type = list(object({
+    principal_id   = string
+    role           = string
+    principal_type = string
+  }))
+  default = []
+}

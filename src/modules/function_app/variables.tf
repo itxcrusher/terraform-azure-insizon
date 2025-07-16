@@ -52,3 +52,13 @@ variable "tenant_id" {
   type        = string
   sensitive   = true
 }
+
+variable "additional_principals" {
+  description = "Optional RBAC assignments for function app's Key Vault"
+  type = list(object({
+    principal_id   = string
+    role           = string
+    principal_type = string
+  }))
+  default = []
+}

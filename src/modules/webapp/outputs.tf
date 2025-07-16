@@ -79,16 +79,10 @@ output "redis_key_secret_uri" {
   value       = length(azurerm_key_vault_secret.redis_primary_key) == 1 ? azurerm_key_vault_secret.redis_primary_key[0].id : null
 }
 
-output "manual_txt_validation" {
-  value       = local.zone_managed ? null : azurerm_app_service_custom_hostname_binding.domain[0].validation_token
-  description = "TXT token - add this at Hostinger if you want an Azure managed cert"
-  sensitive   = true
-}
-
 output "storage_sas_tokens" {
   value = {
     for sa in var.webapp_object.StorageAccount :
-    sa => azurerm_storage_account_sas.attached[sa].sas
+    sa => data.azurerm_storage_account_sas.attached[sa].sas
   }
 }
 
@@ -100,7 +94,7 @@ output "storage_names" {
 output "storage_sas_uris" {
   value = {
     for sa in var.webapp_object.StorageAccount :
-    sa => azurerm_storage_account_sas.attached[sa].sas
+    sa => data.azurerm_storage_account_sas.attached[sa].sas
   }
 }
 
@@ -110,6 +104,5 @@ output "logic_app_id" {
 }
 
 output "cdn_url" {
-  description = "CDN endpoint for webapp storage"
-  value       = try("https://${azurerm_cdn_endpoint.webapp_cdn_endpoint[0].host_name}", null)
+  value = local.use_cdn ? "https://${local.app_name}-endpoint.azureedge.net" : null
 }

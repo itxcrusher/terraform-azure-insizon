@@ -36,7 +36,7 @@ output "connection_strings_per_queue" {
   description = "Map of queue name keys to connection string"
   value = {
     for q in local.queues_map :
-    q.key => data.azurerm_servicebus_namespace_authorization_rule.rootmanage[q.ns_name].primary_connection_string
+    q.key => data.azurerm_servicebus_namespace_authorization_rule.rootmanage[replace(q.ns_name, "-ns", "")].primary_connection_string
   }
   sensitive = true
 }
@@ -45,7 +45,7 @@ output "connection_strings_per_topic" {
   description = "Map of topic name keys to connection string"
   value = {
     for t in local.topics_map :
-    t.key => data.azurerm_servicebus_namespace_authorization_rule.rootmanage[t.ns_name].primary_connection_string
+    t.key => data.azurerm_servicebus_namespace_authorization_rule.rootmanage[replace(t.ns_name, "-ns", "")].primary_connection_string
   }
   sensitive = true
 }
@@ -56,4 +56,8 @@ output "queues_map" {
 
 output "topics_map" {
   value = local.topics_map
+}
+
+output "namespace_name" {
+  value = [for ns in azurerm_servicebus_namespace.ns : ns.name]
 }

@@ -19,22 +19,6 @@ resource "azurerm_app_service_custom_hostname_binding" "domain" {
   ]
 }
 
-resource "azurerm_dns_txt_record" "asuid_validation" {
-  count               = local.custom_domain_enabled && local.zone_managed && local.use_managed_cert ? 1 : 0
-  name                = "asuid.${trimsuffix(local.custom_domain, ".${local.dns_zone_name}")}"
-  zone_name           = local.dns_zone_name
-  resource_group_name = local.dns_zone_rg
-  ttl                 = 300
-
-  record {
-    value = azurerm_app_service_custom_hostname_binding.domain[0].validation_token
-  }
-
-  depends_on = [
-    azurerm_app_service_custom_hostname_binding.domain
-  ]
-}
-
 resource "azurerm_app_service_managed_certificate" "domain_tls" {
   count                      = local.custom_domain_enabled && local.zone_managed && local.use_managed_cert ? 1 : 0
   custom_hostname_binding_id = azurerm_app_service_custom_hostname_binding.domain[0].id

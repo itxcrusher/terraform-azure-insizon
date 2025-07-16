@@ -56,7 +56,7 @@ resource "azurerm_storage_account" "sa" {
     bypass         = ["AzureServices"]
     # Azure no longer supports "AzureFrontDoorService", "MicrosoftCDN" in the bypass field
     # Enable traffic from Front Door / CDN via IP ranges or service tags
-    ip_rules = []
+    # ip_rules = []
   }
 
   tags = local.tags
@@ -93,7 +93,5 @@ resource "azurerm_storage_blob" "upload" {
     lower(regex("[^.]+$", each.value)),
     "application/octet-stream"
   )
-  metadata = {
-    "Cache-Control" = "public, max-age=31536000"
-  }
+  cache_control = "public, max-age=31536000"
 }

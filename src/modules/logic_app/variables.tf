@@ -18,12 +18,6 @@ variable "resource_group_name" {
   description = "Resource group for Logic App"
 }
 
-variable "definition" {
-  description = "Logic App workflow definition JSON"
-  type        = any
-  default     = {}
-}
-
 variable "tags" {
   type = map(string)
 }
