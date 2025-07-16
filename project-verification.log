@@ -1,0 +1,51 @@
+────────────────────────────────────────────────────
+🔎 Verification started: Wed, Jul 16, 2025  7:56:50 AM
+
+
+🧑‍💼 Microsoft Entra ID Users:
+❌ No Entra users found
+
+🌐 Web Apps:
+❌ No entries found for webapp_urls
+
+🌍 Web App Custom Domains:
+❌ No entries found for webapp_custom_domains
+
+⚙️ Function Apps:
+❌ No entries found for function_app_urls
+
+📊 App Insights (Function Apps):
+❌ No entries found for function_app_insights
+
+🔐 Key Vault URIs:
+❌ No entries found for key_vault_uris
+
+🔑 Key Vault Secrets:
+❌ No secrets found
+
+🗃️ Static Website Endpoints:
+❌ No entries found for static_website_endpoints
+
+🧵 Service Bus Namespaces (dev):
+❌ No entries found for service_bus_namespaces.dev
+
+📬 Queues (dev):
+❌ No entries found for service_bus_queues.dev
+
+📡 Topics (dev):
+❌ No entries found for service_bus_topics.dev
+
+📦 Redis:
+ℹ️ Redis not deployed
+
+🕓 Temporary Access SPNs:
+❌ Missing temp SPN creds
+
+🧮 Databases:
+❌ No databases found
+
+🧩 Logic Apps:
+ℹ️ Logic App not created
+
+🎯 CrusherX Verification Complete.
+📄 Report saved to: project-verification.log

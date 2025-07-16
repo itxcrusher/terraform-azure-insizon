@@ -3,6 +3,7 @@ files:
   - FolderName: public
     StorageAccountName: insizon-static-bucket
     ContainerName: public-assets
+
     EnableStaticWebsite: false
     StaticWebsiteIndex: index.html
     Error404Document: 404.html
@@ -11,4 +12,5 @@ files:
       - secret.txt
 
     CustomDomain: static.insizon.muhammadhassaanjaved.com
+    CdnSku: "Standard_Verizon"
     

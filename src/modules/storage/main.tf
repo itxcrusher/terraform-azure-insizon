@@ -15,7 +15,7 @@ resource "azurerm_cdn_profile" "profile" {
   name                = "${local.sa_name}-cdn"
   resource_group_name = azurerm_resource_group.rg.name
   location            = "global"
-  sku                 = "Standard_Microsoft"
+  sku                 = var.file_object.cdn_sku
   tags                = local.tags
 }
 

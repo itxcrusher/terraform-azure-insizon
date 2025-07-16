@@ -76,7 +76,7 @@ module "static_files" {
       if k != "CustomDomain" && k != "EnableStaticWebsite" && k != "StaticWebsiteIndex" && k != "Error404Document"
     },
     {
-      create_cdn    = true,
+      create_cdn    = each.value.create_cdn,
       custom_domain = try(each.value.CustomDomain, null)
     }
   )
@@ -91,7 +91,6 @@ resource "azurerm_role_assignment" "app_scope_roles" {
   principal_id         = module.entra_id_users.user_object_ids[each.value.username]
   role_definition_name = each.value.role_name
   scope                = each.value.scope
-  principal_type       = each.value.principal_type
 
   depends_on = [
     module.webapps,
@@ -106,16 +105,20 @@ resource "null_resource" "validate_app_refs" {
   }
 
   provisioner "local-exec" {
-    command = <<EOT
-if [ "${join(",", local.missing_scopes)}" != "" ]; then
-  echo "Invalid app references in users.yaml:"
-  echo "${join("\\n", local.missing_scopes)}"
-  exit 1
-else
-  echo "All user app references are valid."
-fi
-EOT
+    command = "powershell.exe -Command \"if ('${join(",", local.missing_scopes)}' -ne '') { Write-Host 'Invalid app references in users.yaml:'; '${join("\\n", local.missing_scopes)}'; exit 1 } else { Write-Host 'All user app references are valid.' }\""
   }
+
+#   provisioner "local-exec" {
+#     command = <<EOT
+# if [ "${join(",", local.missing_scopes)}" != "" ]; then
+#   echo "Invalid app references in users.yaml:"
+#   echo "${join("\\n", local.missing_scopes)}"
+#   exit 1
+# else
+#   echo "All user app references are valid."
+# fi
+# EOT
+#   }
 }
 
 resource "azurerm_key_vault_secret" "sb_queue_connections" {

@@ -14,6 +14,8 @@ variable "file_object" {
     create_cdn    = optional(bool, false)
     location      = optional(string, "centralus")
     custom_domain = optional(string) # e.g. "static.insizon.com"
+
+    cdn_sku       = optional(string, "Standard_Verizon")
   })
 }
 

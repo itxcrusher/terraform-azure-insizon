@@ -144,7 +144,6 @@ resource "azurerm_role_assignment" "kv_certificates_officer" {
   scope                = module.key_vault.vault_id
   principal_id         = var.webapp_object.ObjectId # service principal / SPN that needs cert access
   role_definition_name = "Key Vault Certificates Officer"
-  principal_type       = "ServicePrincipal"
 }
 
 ###############################################################################

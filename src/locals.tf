@@ -30,7 +30,9 @@ locals {
     for f in local.static_files_config : "${f.StorageAccountName}-${f.FolderName}" => merge(f, {
       enable_static_website = try(f.EnableStaticWebsite, false),
       static_website_index  = try(f.StaticWebsiteIndex, null),
-      error_404_document    = try(f.Error404Document, null)
+      error_404_document    = try(f.Error404Document, null),
+      cdn_sku               = try(f.CdnSku, "Standard_Verizon"),
+      create_cdn            = try(f.CreateCDN, false)
     })
   }
 }
