@@ -30,3 +30,9 @@ variable "roles_lookup" {
     serviceAccount = "Contributor"
   }
 }
+
+variable "DB_PASSWORD" {
+  description = "Database admin password to inject into config"
+  type        = string
+  sensitive   = true
+}

@@ -61,7 +61,7 @@ apps:
     Database:
       Type: "SQL"                   # Options: SQL or PostgreSQL
       ServerAdminLogin: "adminuser"
-      Password: "${DB_PASSWORD}"    # Inject via env.tfvars
+      Password: "PLACEHOLDER"    # Inject via env.tfvars
       Sku: "GP_S_Gen5_2"
       SizeGB: 5
       MinCapacity: 0.5              # Optional for auto-pause or scaling

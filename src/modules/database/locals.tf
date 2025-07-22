@@ -64,7 +64,8 @@ locals {
   # Does it break any Azure SQL rule?
   #  • must not start with a symbol
   #  • must not contain the admin login
-  _needs_fix = can(regex("^\\W", local._raw_pwd)) || contains(lower(local._raw_pwd), lower(local.db_admin))
+  # _needs_fix = can(regex("^\\W", local._raw_pwd)) || contains(lower(local._raw_pwd), lower(local.db_admin))
+  _needs_fix = can(regex("^\\W", local._raw_pwd)) || can(regex(lower(local.db_admin), lower(local._raw_pwd)))
 
   # Final password that **always** satisfies Azure SQL
   db_password = local._needs_fix ? "Az1${local._raw_pwd}!@" : local._raw_pwd

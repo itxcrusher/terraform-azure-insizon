@@ -10,6 +10,25 @@ locals {
 }
 
 ###############################################################################
+# Override the DB password in memory
+###############################################################################
+locals {
+  apps_config_resolved = [
+    for app in local.apps_config : merge(
+      app,
+      {
+        Database = merge(
+          app.Database,
+          {
+            Password = app.Database.Password == "PLACEHOLDER" ? var.DB_PASSWORD : app.Database.Password
+          }
+        )
+      }
+    )
+  ]
+}
+
+###############################################################################
 # 2.  Simple look-up maps
 ###############################################################################
 locals {
@@ -86,7 +105,7 @@ locals {
 ###############################################################################
 locals {
   apps_by_name = {
-    for app in local.apps_config :
+    for app in local.apps_config_resolved :
     "${app.Name}-${app.Env}" => app
   }
 }

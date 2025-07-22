@@ -32,12 +32,12 @@ resource "azurerm_role_assignment" "rbac" {
 resource "null_resource" "mkdir_temp_access" {
   provisioner "local-exec" {
     # command = "mkdir -p ${path.root}/private/entra_access_keys"
-    command = "powershell.exe -Command \"New-Item -ItemType Directory -Force -Path '${path.root}/private/entra_access_keys'\""
+    command = "powershell.exe -Command \"New-Item -ItemType Directory -Force -Path '${path.root}/../private/entra_access_keys'\""
   }
 }
 
 resource "local_file" "creds" {
-  filename = "${path.root}/private/entra_access_keys/${var.name}.json"
+  filename = "${path.root}/../private/entra_access_keys/${var.name}.json"
   content = jsonencode({
     client_id     = azuread_application.app.client_id
     client_secret = azuread_application_password.pwd.value
